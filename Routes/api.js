@@ -18,6 +18,9 @@ const gfsModel = require('../Models/gfModel');
 
 mongoose.Promise = global.Promise;
 
+//THEME ENLISTED
+const theme = ['population','crime'];
+
 //FOR FILE UPLOAD/DOWNLOAD
 const conn = mongoose.createConnection(config.DATABASE);
 
@@ -97,16 +100,19 @@ router.get('/files/:filename', (req,res) => {
 
 //@route GET /
 //@desc Loads particular theme data
-// router.get('/:theme', (req,res) => {
-//     gfsModel.onlytheme(req.params.theme, (err, file)=>{
-//         if (!file || file.length === 0) {
-//             return res.status(400).json({
-//                 err: 'No file exists'
-//             });
-//         }
-//         res.status(200).json(file)
-//     })
-// });
+router.get('/:theme', function (req,res,next) {
+    if (theme.includes(req.params.theme)){
+    gfsModel.onlytheme(req.params.theme, (err, file)=>{
+        if (!file || file.length === 0) {
+            return res.status(400).json({
+                err: 'No file exists'
+            });
+        }
+        res.status(200).json(file)
+    })} else next('route')
+ },function (req, res, next) {
+     console.log('ho ta')
+ });
 
 //@route DELETE /
 //@desc Delete an image
