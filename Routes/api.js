@@ -16,7 +16,13 @@ const filter = require('promise-filter');
 //Model for GeoJSON
 const gfsModel = require('../Models/gfModel');
 
+//Accept Global Promise as Mongoose Promise
 mongoose.Promise = global.Promise;
+
+
+
+//Import Routing logic
+const theme_city = require('./theme_city');
 
 //THEME ENLISTED
 const theme = ['population','crime'];
@@ -87,16 +93,16 @@ router.get('/', (req,res) => {
 
 //@route GET /
 //@desc Loads a single file
-router.get('/files/:filename', (req,res) => {
-    gfs.files.findOne({filename: req.params.filename}, (err, file)=>{
-        if (!file || file.length === 0) {
-            return res.status(400).json({
-                err: 'No file exists'
-            });
-        }
-        res.status(200).json(file.metadata)
-    })
-});
+// router.get('/files/:filename', (req,res) => {
+//     gfs.files.findOne({filename: req.params.filename}, (err, file)=>{
+//         if (!file || file.length === 0) {
+//             return res.status(400).json({
+//                 err: 'from files/filename'
+//             });
+//         }
+//         res.status(200).json(file.metadata)
+//     })
+// });
 
 //@route GET /
 //@desc Loads particular theme data
@@ -105,7 +111,7 @@ router.get('/:theme', function (req,res,next) {
     gfsModel.onlytheme(req.params.theme, (err, file)=>{
         if (!file || file.length === 0) {
             return res.status(400).json({
-                err: 'No file exists'
+                err: 'From theme only'
             });
         }
         res.status(200).json(file)
@@ -119,7 +125,7 @@ router.get('/:theme', function (req,res,next) {
 router.delete('/files/:id', (req,res) => {
     gfs.exist({_id: req.params.id, root: 'uploads'}, (err, file) => {
         if (err || !file) {
-            res.status(404).send('File not found');
+            res.status(404).send('from files/id only');
         } else {
             gfs.remove({_id: req.params.id, root: 'uploads'}, (err, gridStore)=>{
                 if (err) {
@@ -181,7 +187,7 @@ router.get('/:cityName', (req,res)=>{
         gfsModel.inside(city, (err, file) => {
             if (!file || file.length === 0) {
                 return res.status(404).json({
-                    err: 'No files exist'
+                    err: 'from city only'
                 });
             }
             return res.status(200).send(file)
@@ -193,48 +199,11 @@ router.get('/:cityName', (req,res)=>{
 });
 
 
-router.get('/:city/:theme', (req, res) => {
-    const cityName = req.params.city;
-    const theme = req.params.theme;
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    .then((response) => {
-        const city = (response.data)[1].geojson.coordinates;
-        gfsModel.themeCity(city, theme, (err, file) => {
-            if (!file || file.length === 0) {
-                return res.status(404).json({
-                    err: 'No files exist'
-                });
-            }
-            return res.status(200).send(file)
-        })
-    })
-    .catch(error => {
-        res.send(error);
-    });
+//@route GET 
+//@desc Theme within City or City within Theme
+router.get('/:theme/*',  theme_city, (req, res) => {
+    res.send(req.data);
 })
-
-router.get('/:theme/:city', (req, res) => {
-    const cityName = req.params.city;
-    const theme = req.params.theme;
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    .then((response) => {
-        const city = (response.data)[1].geojson.coordinates;
-        gfsModel.themeCity(city, theme, (err, file) => {
-            if (!file || file.length === 0) {
-                return res.status(404).json({
-                    err: 'No files exist'
-                });
-            }
-            return res.status(200).send(file)
-        })
-    })
-    .catch(error => {
-        res.send(error);
-    });
-})
-
-
-  
 
 
 //@route POST /upload

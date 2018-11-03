@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const schemaGrid = new mongoose.Schema({}, {strict: false});
 
+
 //@route GET /
 //@desc Loads all WITHIN data
 schemaGrid.statics.inside =    function(coordinate, cb){
