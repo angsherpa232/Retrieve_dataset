@@ -11,7 +11,7 @@ const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
 const config = require('../config/config').get(process.env.NODE_ENV);
-const filter = require('promise-filter');
+const validateTime = require('./timevalidate');
 
 //Model for GeoJSON
 const gfsModel = require('../Models/gfModel');
@@ -56,10 +56,11 @@ const storage = new GridFsStorage({
             metadata: {
                 location:{
                     "coordinates": 
-                [7.61112213134766, 
-                    51.9636780652201]                
+                [7.91112213134766, 
+                    51.6734780652201]                
                     },
-                    tags: 'population'
+                    tags: 'population',
+                    DateTime: '12-04-2014' //day-month-year
             }
           };
           resolve(fileInfo);
@@ -104,6 +105,17 @@ router.get('/', (req,res) => {
 //     })
 // });
 
+//Later place the time below the theme and above city
+ //@route GET /
+//@desc Loads data based on time
+router.get('/:time', validateTime, function (req,res,next) {
+    res.status(200).json({
+        "local_start": req.startDate,
+        "local_end": req.endDate,
+        "full": req.full
+    });
+})
+
 //@route GET /
 //@desc Loads particular theme data
 router.get('/:theme', function (req,res,next) {
@@ -119,6 +131,8 @@ router.get('/:theme', function (req,res,next) {
  },function (req, res, next) {
      console.log('ho ta')
  });
+
+
 
 //@route DELETE /
 //@desc Delete an image
@@ -137,6 +151,43 @@ router.delete('/files/:id', (req,res) => {
     });
 });
 
+
+
+//@route GET /
+//@desc Load all the files within the city
+router.get('/:cityName', (req,res)=>{
+    const cityName = req.params.cityName;
+    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
+    .then((response) => {
+        const city = (response.data)[1].geojson.coordinates;
+        gfsModel.inside(city, (err, file) => {
+            if (!file || file.length === 0) {
+                return res.status(404).json({
+                    err: 'from city only'
+                });
+            }
+            return res.status(200).send(file)
+        })
+    })
+    .catch(error => {
+        res.send(error);
+    });
+});
+
+//@route GET 
+//@desc Get eitherway theme/city or city/theme
+router.get('/:theme/*', theme_city, (req,res) => {
+    res.send(req.data)
+})
+
+//@route POST /upload
+//@desc Uploads file to DB
+router.post('/upload', upload.single('file'), (req,res) => {
+    res.json({file: req.file});
+    //res.redirect('/');
+});
+
+//ADD LATER//
 //@route GET /
 //@desc Load image to browser
 // router.get('/image/:filename', (req,res) => {
@@ -176,40 +227,5 @@ router.delete('/files/:id', (req,res) => {
 //         res.send(datas)
 //     });
 // })
-
-//@route GET /
-//@desc Load all the files within the city
-router.get('/:cityName', (req,res)=>{
-    const cityName = req.params.cityName;
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    .then((response) => {
-        const city = (response.data)[1].geojson.coordinates;
-        gfsModel.inside(city, (err, file) => {
-            if (!file || file.length === 0) {
-                return res.status(404).json({
-                    err: 'from city only'
-                });
-            }
-            return res.status(200).send(file)
-        })
-    })
-    .catch(error => {
-        res.send(error);
-    });
-});
-
-//@route GET 
-//@desc Get eitherway theme/city or city/theme
-router.get('/:theme/*', theme_city, (req,res) => {
-    res.send(req.data)
-})
-
-//@route POST /upload
-//@desc Uploads file to DB
-router.post('/upload', upload.single('file'), (req,res) => {
-    res.json({file: req.file});
-    //res.redirect('/');
-});
-
 
 module.exports = router;
