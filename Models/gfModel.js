@@ -22,11 +22,14 @@ schemaGrid.statics.onlytheme =   function(theme, callback) {
 schemaGrid.statics.themeCity =    function(coordinate,theme, cb){
     this.find().where('metadata.tags').equals(theme).where('metadata.location.coordinates').within().geometry({ type: 'Polygon', coordinates: coordinate })
      .exec(cb)
-     }
+     };
 
-schemaGrid.method('filtertheme', function(err, theme) {
-    console.log(this.theme);
-});
+//@route GET /
+//@desc Load data based on TIME
+schemaGrid.statics.filterTime = function(startTime, cb) {
+    this.find().where('metadata.DateTime').equals(startTime)
+    .exec(cb);
+};
 
 
 //define Model for metadata collection.

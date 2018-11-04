@@ -56,11 +56,11 @@ const storage = new GridFsStorage({
             metadata: {
                 location:{
                     "coordinates": 
-                [7.91112213134766, 
-                    51.6734780652201]                
+                [7.64412213134766, 
+                    51.6856780652201]                
                     },
                     tags: 'population',
-                    DateTime: '12-04-2014' //day-month-year
+                    DateTime: '4-11-2018' //day-month-year
             }
           };
           resolve(fileInfo);
@@ -109,11 +109,10 @@ router.get('/', (req,res) => {
  //@route GET /
 //@desc Loads data based on time
 router.get('/:time', validateTime, function (req,res,next) {
-    res.status(200).json({
-        "local_start": req.startDate,
-        "local_end": req.endDate,
-        "full": req.full
-    });
+    gfsModel.filterTime(req.startDate, (err, file) => {
+        if (err) res.status(400).send(err);
+        res.status(200).send(file)
+    })
 })
 
 //@route GET /
