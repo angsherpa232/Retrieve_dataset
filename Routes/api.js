@@ -198,13 +198,11 @@ router.get('/:cityName', (req,res)=>{
     });
 });
 
-
 //@route GET 
-//@desc Theme within City or City within Theme
-router.get('/:theme/*',  theme_city, (req, res) => {
-    res.send(req.data);
+//@desc Get eitherway theme/city or city/theme
+router.get('/:theme/*', theme_city, (req,res) => {
+    res.send(req.data)
 })
-
 
 //@route POST /upload
 //@desc Uploads file to DB
