@@ -20,6 +20,6 @@
     "mongoose": "^5.3.4",
     "multer": "^1.4.1",
     "multer-gridfs-storage": "^3.2.3",
-    "promise-filter": "^1.1.0"
+    "sherlockjs": "^1.4.0"
   }
 }
