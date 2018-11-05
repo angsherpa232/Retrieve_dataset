@@ -56,11 +56,11 @@ const storage = new GridFsStorage({
             metadata: {
                 location:{
                     "coordinates": 
-                [7.64412213134766, 
-                    51.6856780652201]                
+                [7.64986213134766, 
+                    51.6843680652201]                
                     },
                     tags: 'population',
-                    DateTime: '4-11-2018' //day-month-year
+                    DateTime: '2017-11-03' //day-month-year
             }
           };
           resolve(fileInfo);
@@ -105,32 +105,36 @@ router.get('/', (req,res) => {
 //     })
 // });
 
-//Later place the time below the theme and above city
- //@route GET /
-//@desc Loads data based on time
-router.get('/:time', validateTime, function (req,res,next) {
-    gfsModel.filterTime(req.startDate, (err, file) => {
-        if (err) res.status(400).send(err);
-        res.status(200).send(file)
-    })
-})
+
 
 //@route GET /
 //@desc Loads particular theme data
-router.get('/:theme', function (req,res,next) {
-    if (theme.includes(req.params.theme)){
-    gfsModel.onlytheme(req.params.theme, (err, file)=>{
-        if (!file || file.length === 0) {
-            return res.status(400).json({
-                err: 'From theme only'
-            });
-        }
-        res.status(200).json(file)
-    })} else next('route')
- },function (req, res, next) {
-     console.log('ho ta')
- });
+// router.get('/:theme', function (req,res,next) {
+//     if (theme.includes(req.params.theme)){
+//     gfsModel.onlytheme(req.params.theme, (err, file)=>{
+//         if (!file || file.length === 0) {
+//             return res.status(400).json({
+//                 err: 'From theme only'
+//             });
+//         }
+//         res.status(200).json(file)
+//     })} else next('route')
+//  },function (req, res, next) {
+//      console.log('ho ta')
+//  });
 
+ //Later place the time below the theme and above city
+ //@route GET /
+//@desc Loads data based on time
+router.get('/:time', validateTime, function (req,res) {
+    gfsModel.filterTime(req.startDate, (err, file) => {
+        if (err) {
+            res.status(400).send(err)
+        } else {
+            res.status(200).send(file)
+        }
+    })
+});
 
 
 //@route DELETE /
@@ -161,11 +165,12 @@ router.get('/:cityName', (req,res)=>{
         const city = (response.data)[1].geojson.coordinates;
         gfsModel.inside(city, (err, file) => {
             if (!file || file.length === 0) {
-                return res.status(404).json({
+                res.status(404).json({
                     err: 'from city only'
                 });
-            }
-            return res.status(200).send(file)
+            } else {
+                res.status(200).send(file)
+            } 
         })
     })
     .catch(error => {
