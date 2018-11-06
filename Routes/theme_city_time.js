@@ -5,13 +5,14 @@ const gfsModel = require('../Models/gfModel');
 //THEME ENLISTED
 const themed = ['population','crime'];
 
-function get_city_theme(route) {
-    if (themed.includes(route.theme)) return {cityName: route[0],theme_value:route.theme};
-    return {cityName: route.theme, theme_value: route[0]};
-}
-
 let theme_city = function (req,res,next) {
-    let {cityName, theme_value} = get_city_theme(req.params);
+    if (themed.includes(req.params.theme)){
+        var cityName = req.params[0];
+        var theme_value = req.params.theme;
+    } else {
+        var cityName = req.params.theme;
+        var theme_value = req.params[0];
+    }
     axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
     .then((response) => {
         const city = (response.data)[1].geojson.coordinates;
