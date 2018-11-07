@@ -11,7 +11,7 @@ const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
 const config = require('../config/config').get(process.env.NODE_ENV);
-const validateTime = require('./timevalidate');
+
 
 //Model for GeoJSON
 const gfsModel = require('../Models/gfModel');
@@ -21,9 +21,9 @@ mongoose.Promise = global.Promise;
 
 
 
-//Import Routing logic
-const theme_city = require('./theme_city');
+//Import Routing logic > MIDDLEWARE
 const theme_city_time = require('./theme_city_time');
+const validateTime = require('./timevalidate');
 
 //THEME ENLISTED
 const theme = ['population','crime'];
