@@ -23,6 +23,7 @@ mongoose.Promise = global.Promise;
 
 //Import Routing logic
 const theme_city = require('./theme_city');
+const theme_city_time = require('./theme_city_time');
 
 //THEME ENLISTED
 const theme = ['population','crime'];
@@ -178,9 +179,10 @@ router.get('/:cityName', (req,res)=>{
     });
 });
 
+//change theme_city_time to theme_city if needed :D
 //@route GET 
 //@desc Get eitherway theme/city or city/theme
-router.get('/:theme/*', theme_city, (req,res) => {
+router.get('/:theme/*', theme_city_time, (req,res) => {
     res.send(req.data)
 })
 
