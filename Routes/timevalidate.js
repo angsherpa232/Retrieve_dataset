@@ -5,8 +5,8 @@ function dateFormatter() {
 	return this.getFullYear() + '-' + ('0'+(this.getMonth()+1)).slice(-2)+ '-' +(('0'+this.getDate()).slice(-2));
 }
 
-let validateTime = function (req, res, next) {
-        const UTC_based = Sherlock.parse(req.params.time);
+let parseTime = function (enteredTime, req, next) {
+    const UTC_based = Sherlock.parse(enteredTime);
         if (UTC_based.startDate === null) {
             next()
         } else {
@@ -24,10 +24,14 @@ let validateTime = function (req, res, next) {
             req.startDate = localTZ_based_start;
             req.endDate = localTZ_based_end;
             req.full = UTC_based;
-            //console.log(UTC_based)
+            // console.log(UTC_based)
             next();
         }
     }
 }
 
-module.exports = validateTime;
+let validateTime = function (req, res, next) {
+        parseTime(req.params.time, req, next);
+}
+
+module.exports = {validateTime, parseTime};

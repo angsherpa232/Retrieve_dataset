@@ -23,7 +23,7 @@ mongoose.Promise = global.Promise;
 
 //Import Routing logic > MIDDLEWARE
 const theme_city_time = require('./theme_city_time');
-const validateTime = require('./timevalidate');
+const {validateTime} = require('./timevalidate');
 
 //THEME ENLISTED
 const theme = ['population','crime'];
@@ -183,7 +183,18 @@ router.get('/:cityName', (req,res)=>{
 //@route GET 
 //@desc Get eitherway theme/city or city/theme
 router.get('/:theme/*', theme_city_time, (req,res) => {
-    res.send(req.data)
+    console.log('ma pani')
+    if (req.data) res.status(200).send(req.data);
+    if (req.startDate) {
+        gfsModel.filterTime(req.startDate, (err, file) => {
+            if (err) {
+                res.status(400).send(err)
+            } else {
+                res.status(200).send(file)
+            }
+        })
+    }
+    //res.status(400).send('Bad request');
 })
 
 //@route POST /upload

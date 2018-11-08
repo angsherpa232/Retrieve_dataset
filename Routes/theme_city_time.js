@@ -8,7 +8,7 @@ const gfsModel = require('../Models/gfModel');
 const themed = ['population', 'crime'];
 
 //MIDDLEWARE
-const validateTime = require('./timevalidate');
+const {parseTime} = require('./timevalidate');
 
 //@desc Theme entered as first parameter and Time as second
 function if_theme_first(route) {
@@ -69,14 +69,14 @@ let theme_city = function (req, res, next) {
         ({cityName,theme_value,...time} = if_theme_first(req.params))
         //Next time begin from this fn validateTime(time.time,next). Seems like validateTime has to be converted into 
         //independent function inside timevalidate.js file :D
-        cityName ? file_within_city(cityName,theme_value,req,next) : validateTime(time.time,next)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
     } else if (themed.includes(req.params[0])) {
-        let {cityName,theme_value} = if_theme_second(req.params)
-        cityName ? file_within_city(cityName,theme_value,req,next) : validateTime(req,next)
+        let {cityName,theme_value, ...time} = if_theme_second(req.params)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
     } else {
         //run the code that checks between time and space
-        let holder = if_theme_not_entered(req.params)
-        console.log('it is: ', holder)
+        let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
+        parseTime(time.time, req, next);
     }
 }
 
