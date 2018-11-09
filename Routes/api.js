@@ -22,7 +22,8 @@ mongoose.Promise = global.Promise;
 
 
 //Import Routing logic > MIDDLEWARE
-const theme_city_time = require('./theme_city_time');
+const theme_city_time_two = require('./theme_city_time_two');
+const theme_city_time_three = require('./theme_city_time_three');
 const {validateTime} = require('./timevalidate');
 
 //THEME ENLISTED
@@ -182,7 +183,7 @@ router.get('/:cityName', (req,res)=>{
 //change theme_city_time to theme_city if needed :D
 //@route GET 
 //@desc Get two by two combination of TIME, THEME AND SPACE.
-router.get('/:theme/*', theme_city_time, (req,res) => {
+router.get('/:theme/*', theme_city_time_two, (req,res) => {
     console.log('ma pani')
     if (req.data) res.status(200).send(req.data);
     if (req.startDate) {
@@ -199,9 +200,9 @@ router.get('/:theme/*', theme_city_time, (req,res) => {
 
 //@route GET 
 //@desc Get three by three combination of TIME, THEME AND SPACE.
-router.get('/:time/*/*', (req,res) => {
-    console.log(Array.isArray(req.params))
-    res.send(req.params)
+router.get('/:time/*/*', theme_city_time_three, (req,res) => {
+    console.log('from three param route')
+    //res.send(req.params)
 })
 
 //@route POST /upload
