@@ -64,6 +64,10 @@ function file_within_city(cityName, theme_value, req, next) {
 //route GET > /theme/* 
 //@desc Middleware for two parameter system
 let theme_city = function (req, res, next) {
+    if (req.params[0].match(/\//g)) {
+        next('route')
+    }
+    else {
     let cityName, theme_value, time;
     if (themed.includes(req.params.theme)) {
         ({cityName,theme_value,...time} = if_theme_first(req.params))
@@ -77,6 +81,7 @@ let theme_city = function (req, res, next) {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
         parseTime(time.time, req, next);
+    }
     }
 }
 

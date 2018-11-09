@@ -110,19 +110,19 @@ router.get('/', (req,res) => {
 
 //@route GET /
 //@desc Loads particular theme data
-// router.get('/:theme', function (req,res,next) {
-//     if (theme.includes(req.params.theme)){
-//     gfsModel.onlytheme(req.params.theme, (err, file)=>{
-//         if (!file || file.length === 0) {
-//             return res.status(400).json({
-//                 err: 'From theme only'
-//             });
-//         }
-//         res.status(200).json(file)
-//     })} else next('route')
-//  },function (req, res, next) {
-//      console.log('ho ta')
-//  });
+router.get('/:theme', function (req,res,next) {
+    if (theme.includes(req.params.theme)){
+    gfsModel.onlytheme(req.params.theme, (err, file)=>{
+        if (!file || file.length === 0) {
+            return res.status(400).json({
+                err: 'From theme only'
+            });
+        }
+        res.status(200).json(file)
+    })} else next('route')
+ },function (req, res, next) {
+     console.log('ho ta')
+ });
 
  //Later place the time below the theme and above city
  //@route GET /
@@ -181,7 +181,7 @@ router.get('/:cityName', (req,res)=>{
 
 //change theme_city_time to theme_city if needed :D
 //@route GET 
-//@desc Get eitherway theme/city or city/theme
+//@desc Get two by two combination of TIME, THEME AND SPACE.
 router.get('/:theme/*', theme_city_time, (req,res) => {
     console.log('ma pani')
     if (req.data) res.status(200).send(req.data);
@@ -195,6 +195,13 @@ router.get('/:theme/*', theme_city_time, (req,res) => {
         })
     }
     //res.status(400).send('Bad request');
+})
+
+//@route GET 
+//@desc Get three by three combination of TIME, THEME AND SPACE.
+router.get('/:time/*/*', (req,res) => {
+    console.log(Array.isArray(req.params))
+    res.send(req.params)
 })
 
 //@route POST /upload
