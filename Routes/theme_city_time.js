@@ -64,7 +64,7 @@ function file_within_city(cityName, theme_value, req, next) {
 //route GET > /theme/* 
 //@desc Middleware for two parameter system
 let theme_city = function (req, res, next) {
-    if (req.params[0].match(/\//g)) {
+    if ((/\//g).test(req.params[0])) {
         next('route')
     }
     else {
