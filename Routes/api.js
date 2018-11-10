@@ -26,6 +26,7 @@ const theme_city_time_two = require('./theme_city_time_two');
 const theme_city_time_three = require('./theme_city_time_three');
 const {validateTime} = require('./timevalidate');
 
+
 //THEME ENLISTED
 const theme = ['population','crime'];
 
@@ -125,18 +126,7 @@ router.get('/:theme', function (req,res,next) {
      console.log('ho ta')
  });
 
- //Later place the time below the theme and above city
- //@route GET /
-//@desc Loads data based on time
-router.get('/:time', validateTime, function (req,res) {
-    gfsModel.filterTime(req.startDate, (err, file) => {
-        if (err) {
-            res.status(400).send(err)
-        } else {
-            res.status(200).send(file)
-        }
-    })
-});
+
 
 
 //@route DELETE /
@@ -160,10 +150,13 @@ router.delete('/files/:id', (req,res) => {
 
 //@route GET /
 //@desc Load all the files within the city
-router.get('/:cityName', (req,res)=>{
+router.get('/:cityName', (req,res,next)=>{
     const cityName = req.params.cityName;
     axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
     .then((response) => {
+       if (response.data.length === 0) {
+           next('route')
+       } else {
         const city = (response.data)[1].geojson.coordinates;
         gfsModel.inside(city, (err, file) => {
             if (!file || file.length === 0) {
@@ -174,10 +167,30 @@ router.get('/:cityName', (req,res)=>{
                 res.status(200).send(file)
             } 
         })
+    }
     })
     .catch(error => {
         res.send(error);
     });
+});
+
+ //Later place the time below the theme and above city
+ //@route GET /
+//@desc Loads data based on time
+router.get('/:time', validateTime, function (req,res) {
+    console.log('inside time')
+    if (req.is_valid) {
+        gfsModel.filterTime(req.startDate, (err, file) => {
+            if (err) {
+                res.status(400).send(err)
+            } else {
+                res.status(200).send(file)
+            }
+        })
+    } else {
+        res.send('Please check for typos.')
+    }
+    
 });
 
 //change theme_city_time to theme_city if needed :D
