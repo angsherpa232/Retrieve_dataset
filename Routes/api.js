@@ -25,6 +25,7 @@ mongoose.Promise = global.Promise;
 const theme_city_time_two = require('./theme_city_time_two');
 const theme_city_time_three = require('./theme_city_time_three');
 const {validateTime} = require('./timevalidate');
+const testing = require('./test');
 
 //THEME ENLISTED
 const theme = ['population','crime'];
@@ -200,9 +201,24 @@ router.get('/:theme/*', theme_city_time_two, (req,res) => {
 
 //@route GET 
 //@desc Get three by three combination of TIME, THEME AND SPACE.
-router.get('/:time/*/*', theme_city_time_three, (req,res) => {
+router.get('/:time/*/*', theme_city_time_three, testing, (req,res) => {
     console.log('from three param route')
-    //res.send(req.params)
+    //console.log(req.time)
+    // axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
+    //     .then((response) => {
+    //         const city = (response.data)[1].geojson.coordinates;
+    //         gfsModel.themeCity(city, theme_value, (err, file) => {
+    //             if (!file || file.length === 0) {
+    //                 req.error = err
+    //                 next()
+    //             }
+    //             req.data = file;
+    //             next()
+    //         })
+    //     })
+    //     .catch(error => {
+    //         res.send(error);
+    //     });
 })
 
 //@route POST /upload
