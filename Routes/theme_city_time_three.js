@@ -84,25 +84,29 @@ let three_param_route = function (req, res, next) {
     if (themed.includes(req.params.time)) {
         ({time,theme_value,cityName} = if_theme_first(req.params))
         console.log('from theme first')
-        if (time || theme_value || cityName === 'undefined') console.log('typos man')
+        
         file_within_city_with_time(cityName,theme_value,time, req,next)
         //gfsModel.themeCity(city, theme_value, (err, file)
 
         //cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
     } else if (themed.includes(req.params[0])) {
-        let {time, theme_value, cityName} = if_theme_second(req.params)
+        ({time, theme_value, cityName} = if_theme_second(req.params))
         //cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
         console.log('from theme sec')
         console.log(time,theme_value,cityName)
+        file_within_city_with_time(cityName,theme_value,time, req,next)
     } else {
         //run the code that checks between time and space
-        let {time, theme_value, cityName} = if_theme_third(req.params)
+        ({time, theme_value, cityName} = if_theme_third(req.params))
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
         console.log('from theme third')
         console.log(time,theme_value,cityName)
-        if (time || theme_value || cityName === 'undefined') console.log('typos man')
+        if (time  === 'undefined') console.log('typos from time man')
+        if (theme_value  === 'undefined') console.log('typos from theme_value man')
+        if (cityName === 'undefined') console.log('typos cityName man')
+        file_within_city_with_time(cityName,theme_value,time, req,next)
     }
 }
 
