@@ -11,7 +11,7 @@ const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
 const config = require('../config/config').get(process.env.NODE_ENV);
-const validateTime = require('./timevalidate');
+
 
 //Model for GeoJSON
 const gfsModel = require('../Models/gfModel');
@@ -21,8 +21,10 @@ mongoose.Promise = global.Promise;
 
 
 
-//Import Routing logic
-const theme_city = require('./theme_city');
+//Import Routing logic > MIDDLEWARE
+const theme_city_time_two = require('./theme_city_time_two');
+const theme_city_time_three = require('./theme_city_time_three');
+const {validateTime} = require('./timevalidate');
 
 //THEME ENLISTED
 const theme = ['population','crime'];
@@ -109,19 +111,19 @@ router.get('/', (req,res) => {
 
 //@route GET /
 //@desc Loads particular theme data
-// router.get('/:theme', function (req,res,next) {
-//     if (theme.includes(req.params.theme)){
-//     gfsModel.onlytheme(req.params.theme, (err, file)=>{
-//         if (!file || file.length === 0) {
-//             return res.status(400).json({
-//                 err: 'From theme only'
-//             });
-//         }
-//         res.status(200).json(file)
-//     })} else next('route')
-//  },function (req, res, next) {
-//      console.log('ho ta')
-//  });
+router.get('/:theme', function (req,res,next) {
+    if (theme.includes(req.params.theme)){
+    gfsModel.onlytheme(req.params.theme, (err, file)=>{
+        if (!file || file.length === 0) {
+            return res.status(400).json({
+                err: 'From theme only'
+            });
+        }
+        res.status(200).json(file)
+    })} else next('route')
+ },function (req, res, next) {
+     console.log('ho ta')
+ });
 
  //Later place the time below the theme and above city
  //@route GET /
@@ -178,10 +180,48 @@ router.get('/:cityName', (req,res)=>{
     });
 });
 
+//change theme_city_time to theme_city if needed :D
 //@route GET 
-//@desc Get eitherway theme/city or city/theme
-router.get('/:theme/*', theme_city, (req,res) => {
-    res.send(req.data)
+//@desc Get two by two combination of TIME, THEME AND SPACE.
+router.get('/:theme/*', theme_city_time_two, (req,res) => {
+    console.log('ma pani')
+    if (req.data) res.status(200).send(req.data);
+    if (req.startDate) {
+        gfsModel.filterTime(req.startDate, (err, file) => {
+            if (err) {
+                res.status(400).send(err)
+            } else {
+                res.status(200).send(file)
+            }
+        })
+    }
+    //res.status(400).send('Bad request');
+})
+
+//@route GET 
+//@desc Get three by three combination of TIME, THEME AND SPACE.
+router.get('/:time/*/*', theme_city_time_three, (req,res) => {
+    console.log('from three param route')
+    gfsModel.filterTimeThemeSpace(req.startDate, req.theme_value, req.city, (err, file) => {
+        if (err) status(400).json({'err': req.err});
+        res.send(file)
+    })
+    //console.log(req.time)
+    // axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
+    //     .then((response) => {
+    //         const city = (response.data)[1].geojson.coordinates;
+    //         gfsModel.themeCity(city, theme_value, (err, file) => {
+    //             if (!file || file.length === 0) {
+    //                 req.error = err
+    //                 next()
+    //             }
+    //             req.data = file;
+    //             next()
+    //         })
+    //     })
+    //     .catch(error => {
+    //         res.send(error);
+    //     });
 })
 
 //@route POST /upload
