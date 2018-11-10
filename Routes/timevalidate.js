@@ -1,5 +1,6 @@
 const Sherlock = require('sherlockjs');
 const watson = require('./wat');
+const date_validator = require("DateValidator").DateValidator;
 
 function dateFormatter() {
 	return this.getFullYear() + '-' + ('0'+(this.getMonth()+1)).slice(-2)+ '-' +(('0'+this.getDate()).slice(-2));
@@ -8,6 +9,9 @@ function dateFormatter() {
 let parseTime = function (enteredTime, req, next, err) {
     const UTC_based = Sherlock.parse(enteredTime);
         if (UTC_based.startDate === null) {
+            const is_valid = date_validator.validate(UTC_based.startDate);
+            console.log(is_valid);
+            req.is_valid = is_valid;
             next()
         } else {
         if (!UTC_based.endDate){
@@ -17,6 +21,7 @@ let parseTime = function (enteredTime, req, next, err) {
             req.endDate = localTZ_based_end;
             req.full = UTC_based;
             req.error = err;
+            req.is_valid = true;
             //console.log(UTC_based)
             next();
         } else {
@@ -26,6 +31,7 @@ let parseTime = function (enteredTime, req, next, err) {
             req.endDate = localTZ_based_end;
             req.full = UTC_based;
             req.error = err;
+            req.is_valid = true;
             // console.log(UTC_based)
             next();
         }
