@@ -43,42 +43,12 @@ function optimizer(req, next) {
     next()
 }
 
-//@desc Loads all the files for chosen theme within the city
-function file_within_city(cityName, theme_value, req, next) {
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-        .then((response) => {
-            const city = (response.data)[1].geojson.coordinates;
-            gfsModel.themeCity(city, theme_value, (err, file) => {
-                if (!file || file.length === 0) {
-                    req.error = err
-                    next()
-                }
-                req.data = file;
-                next()
-            })
-        })
-        .catch(error => {
-            res.send(error);
-        });
-}
-
-//@desc Loads all the files for chosen theme within the city
+//@desc Loads the geojson for city polygon
 async function file_within_city_with_time (cityName, theme_value, time, req, next) {
     const fetchedCity = await getgeoJson(cityName, req, next);
     req.city = (fetchedCity.data)[1].geojson.coordinates;
     req.theme_value = theme_value;
-    parseTime(time,req,next)
-    // axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    //     .then((response) => {
-    //         const city = (response.data)[1].geojson.coordinates;
-    //         req.city = city;
-    //         req.theme_value = theme_value;
-    //         parseTime(time,req,next)
-    //     })
-    //     .catch(error => {
-    //         req.error = error;
-    //         next();
-    //     });
+    parseTime(time,req,next);
 }
 
 //route GET > /theme/*/* 
