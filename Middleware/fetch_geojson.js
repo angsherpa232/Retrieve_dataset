@@ -1,20 +1,24 @@
 const axios = require('axios');
 
-function getgeoJson(cityName) {
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    .then((response) => {
-        const city = (response.data)[1].geojson.coordinates;
-        req.city = city;
-    })
-    .catch(error => {
-        req.error = error;
-    });
+async function getgeoJson(cityName, req, next) {
+    try {
+    return await axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`);
+    } catch (e) {
+        req.error = e;
+        next();
+    }
 }; 
 
-let geojsonPoly = function (req, res, next) {
-    getgeoJson(req.params.cityNamed);
-    console.log('city is', req.city)
-    next();
+//@route GET > /:cityName
+//@desc If entered params is not a city then redirect to next route i.e. /:time
+let geojsonPoly = async function (req, res, next) {
+    const fetchedCity = await getgeoJson(req.params.cityName, req, next);
+    if (fetchedCity.data.length === 0) {
+        next('route');
+    } else {
+        req.city = (fetchedCity.data)[1].geojson.coordinates;
+        next();
+    }
 };
 
-module.exports = geojsonPoly;
+module.exports = {geojsonPoly, getgeoJson};

@@ -9,7 +9,7 @@ const themed = ['population', 'crime'];
 
 //MIDDLEWARE
 const {parseTime} = require('./timevalidate');
-
+const {getgeoJson} = require('../Middleware/fetch_geojson');
 
 //@desc Theme entered as first parameter and Time as second
 function if_theme_first(route) {
@@ -63,18 +63,22 @@ function file_within_city(cityName, theme_value, req, next) {
 }
 
 //@desc Loads all the files for chosen theme within the city
-function file_within_city_with_time (cityName, theme_value, time, req, next) {
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-        .then((response) => {
-            const city = (response.data)[1].geojson.coordinates;
-            req.city = city;
-            req.theme_value = theme_value;
-            parseTime(time,req,next)
-        })
-        .catch(error => {
-            req.error = error;
-            next();
-        });
+async function file_within_city_with_time (cityName, theme_value, time, req, next) {
+    const fetchedCity = await getgeoJson(cityName, req, next);
+    req.city = (fetchedCity.data)[1].geojson.coordinates;
+    req.theme_value = theme_value;
+    parseTime(time,req,next)
+    // axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
+    //     .then((response) => {
+    //         const city = (response.data)[1].geojson.coordinates;
+    //         req.city = city;
+    //         req.theme_value = theme_value;
+    //         parseTime(time,req,next)
+    //     })
+    //     .catch(error => {
+    //         req.error = error;
+    //         next();
+    //     });
 }
 
 //route GET > /theme/*/* 

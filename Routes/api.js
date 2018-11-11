@@ -19,13 +19,11 @@ const gfsModel = require('../Models/gfModel');
 //Accept Global Promise as Mongoose Promise
 mongoose.Promise = global.Promise;
 
-
-
 //Import Routing logic > MIDDLEWARE
 const theme_city_time_two = require('./theme_city_time_two');
 const theme_city_time_three = require('./theme_city_time_three');
 const {validateTime} = require('./timevalidate');
-
+const {geojsonPoly} = require('../Middleware/fetch_geojson');
 
 //THEME ENLISTED
 const theme = ['population','crime'];
@@ -150,28 +148,29 @@ router.delete('/files/:id', (req,res) => {
 
 //@route GET /
 //@desc Load all the files within the city
-router.get('/:cityName', (req,res,next)=>{
-    const cityName = req.params.cityName;
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    .then((response) => {
-       if (response.data.length === 0) {
-           next('route')
-       } else {
-        const city = (response.data)[1].geojson.coordinates;
-        gfsModel.inside(city, (err, file) => {
+router.get('/:cityName', geojsonPoly,(req,res,next)=>{
+    // const cityName = req.params.cityName;
+    // axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
+    // .then((response) => {
+    //    if (response.data.length === 0) {
+    //        next('route')
+    //    } else {
+    //     const city = (response.data)[1].geojson.coordinates;
+        gfsModel.inside(req.city, (err, file) => {
+            console.log('file is',file)
             if (!file || file.length === 0) {
                 res.status(404).json({
-                    err: 'from city only'
+                    err: req.error
                 });
             } else {
                 res.status(200).send(file)
             } 
         })
-    }
-    })
-    .catch(error => {
-        res.send(error);
-    });
+    // }
+    // })
+    // .catch(error => {
+    //     res.send(error);
+    // });
 });
 
  //Later place the time below the theme and above city
