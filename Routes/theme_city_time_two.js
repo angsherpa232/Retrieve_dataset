@@ -9,6 +9,7 @@ const themed = ['population', 'crime'];
 
 //MIDDLEWARE
 const {parseTime} = require('./timevalidate');
+const {getgeoJson} = require('../Middleware/fetch_geojson');
 
 //@desc Theme entered as first parameter and Time as second
 function if_theme_first(route) {
@@ -43,22 +44,17 @@ function optimizer(req, next) {
 }
 
 //@desc Loads all the files for chosen theme within the city
-function file_within_city(cityName, theme_value, req, next) {
-    axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-        .then((response) => {
-            const city = (response.data)[1].geojson.coordinates;
-            gfsModel.themeCity(city, theme_value, (err, file) => {
-                if (!file || file.length === 0) {
-                    req.error = err
-                    next()
-                }
-                req.data = file;
-                next()
-            })
-        })
-        .catch(error => {
-            res.send(error);
-        });
+async function file_within_city(cityName, theme_value, req, next) {
+    const fetchedCity = await getgeoJson(cityName, req, next);
+    const city = (fetchedCity.data)[1].geojson.coordinates;
+    gfsModel.themeCity(city, theme_value, (err, file) => {
+        if (!file || file.length === 0) {
+            req.error = err
+            next()
+        }
+        req.data = file;
+        next()
+    });
 }
 
 //route GET > /theme/* 
