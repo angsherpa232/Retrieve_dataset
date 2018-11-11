@@ -4,7 +4,7 @@ const router = express.Router();
 const axios = require('axios');
 
 //FILE UPLOAD/DOWNLOAD MODULES
-const path= require('path');
+const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
@@ -22,11 +22,11 @@ mongoose.Promise = global.Promise;
 //Import Routing logic > MIDDLEWARE
 const theme_city_time_two = require('./theme_city_time_two');
 const theme_city_time_three = require('./theme_city_time_three');
-const {validateTime} = require('./timevalidate');
-const {geojsonPoly} = require('../Middleware/fetch_geojson');
+const { validateTime } = require('./timevalidate');
+const { geojsonPoly } = require('../Middleware/fetch_geojson');
 
 //THEME ENLISTED
-const theme = ['population','crime'];
+const theme = ['population', 'crime'];
 
 //FOR FILE UPLOAD/DOWNLOAD
 const conn = mongoose.createConnection(config.DATABASE);
@@ -35,9 +35,9 @@ const conn = mongoose.createConnection(config.DATABASE);
 let gfs;
 
 conn.once('open', () => {
-  // Init stream
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection('uploads');
+    // Init stream
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection('uploads');
 });
 
 
@@ -45,38 +45,45 @@ conn.once('open', () => {
 const storage = new GridFsStorage({
     url: config.DATABASE,
     file: (req, file) => {
-      return new Promise((resolve, reject) => {
-        crypto.randomBytes(16, (err, buf) => {
-          if (err) {
-            return reject(err);
-          }
-          const filename = buf.toString('hex') + path.extname(file.originalname);
-          const fileInfo = {
-            filename: filename,
-            bucketName: 'uploads',
-            metadata: {
-                location:{
-                    "coordinates": 
-                [7.64986213134766, 
-                    51.6843680652201]                
-                    },
-                    tags: 'population',
-                    DateTime: '2017-11-03' //day-month-year
-            }
-          };
-          resolve(fileInfo);
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'uploads',
+                    metadata: {
+                        location: {
+                            "coordinates":
+                                [7.64986213134766,
+                                    51.6843680652201]
+                        },
+                        tags: 'population',
+                        DateTime: '2017-11-03' //day-month-year
+                    }
+                };
+                resolve(fileInfo);
+            });
         });
-      });
     }
-  });
-  const upload = multer({ storage });
+});
+const upload = multer({ storage });
 
 
 //MONGO FILE UPLOAD/DOWNLOAD SECTION
 //GET MAIN ROUTE
-router.get('/', (req,res) => {
+router.get('/', (req, res) => {
     res.render('index');
 })
+
+router.get('/hallo', (req, res) => {
+    gfsModel.within_radius(req.query.lng, req.query.lat, req.query.distance, (error, file) => {
+        if (error) res.send(error);
+        res.send(file)
+    });
+});
 
 //@route GET /
 //@desc Loads all files
@@ -110,33 +117,34 @@ router.get('/', (req,res) => {
 
 //@route GET /
 //@desc Loads particular theme data
-router.get('/:theme', function (req,res,next) {
-    if (theme.includes(req.params.theme)){
-    gfsModel.onlytheme(req.params.theme, (err, file)=>{
-        if (!file || file.length === 0) {
-            return res.status(400).json({
-                err: 'From theme only'
-            });
-        }
-        res.status(200).json(file)
-    })} else next('route')
- },function (req, res, next) {
-     console.log('ho ta')
- });
+router.get('/:theme', function (req, res, next) {
+    if (theme.includes(req.params.theme)) {
+        gfsModel.onlytheme(req.params.theme, (err, file) => {
+            if (!file || file.length === 0) {
+                return res.status(400).json({
+                    err: 'From theme only'
+                });
+            }
+            res.status(200).json(file)
+        })
+    } else next('route')
+}, function (req, res, next) {
+    console.log('ho ta')
+});
 
 
 
 
 //@route DELETE /
 //@desc Delete an image
-router.delete('/files/:id', (req,res) => {
-    gfs.exist({_id: req.params.id, root: 'uploads'}, (err, file) => {
+router.delete('/files/:id', (req, res) => {
+    gfs.exist({ _id: req.params.id, root: 'uploads' }, (err, file) => {
         if (err || !file) {
             res.status(404).send('from files/id only');
         } else {
-            gfs.remove({_id: req.params.id, root: 'uploads'}, (err, gridStore)=>{
+            gfs.remove({ _id: req.params.id, root: 'uploads' }, (err, gridStore) => {
                 if (err) {
-                    return res.status(404).json({err:err})
+                    return res.status(404).json({ err: err })
                 }
                 res.send('yahoo')
             })
@@ -148,35 +156,22 @@ router.delete('/files/:id', (req,res) => {
 
 //@route GET /
 //@desc Load all the files within the city
-router.get('/:cityName', geojsonPoly,(req,res,next)=>{
-    // const cityName = req.params.cityName;
-    // axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    // .then((response) => {
-    //    if (response.data.length === 0) {
-    //        next('route')
-    //    } else {
-    //     const city = (response.data)[1].geojson.coordinates;
-        gfsModel.inside(req.city, (err, file) => {
-            console.log('file is',file)
-            if (!file || file.length === 0) {
-                res.status(404).json({
-                    err: req.error
-                });
-            } else {
-                res.status(200).send(file)
-            } 
-        })
-    // }
-    // })
-    // .catch(error => {
-    //     res.send(error);
-    // });
+router.get('/:cityName', geojsonPoly, (req, res, next) => {
+    gfsModel.inside(req.city, (err, file) => {
+        if (!file || file.length === 0) {
+            res.status(404).json({
+                err: req.error
+            });
+        } else {
+            res.status(200).send(file)
+        }
+    })
 });
 
- //Later place the time below the theme and above city
- //@route GET /
+//Later place the time below the theme and above city
+//@route GET /
 //@desc Loads data based on time
-router.get('/:time', validateTime, function (req,res) {
+router.get('/:time', validateTime, function (req, res) {
     console.log('inside time')
     if (req.is_valid) {
         gfsModel.filterTime(req.startDate, (err, file) => {
@@ -189,13 +184,12 @@ router.get('/:time', validateTime, function (req,res) {
     } else {
         res.send('Please check for typos.')
     }
-    
+
 });
 
-//change theme_city_time to theme_city if needed :D
 //@route GET 
 //@desc Get two by two combination of TIME, THEME AND SPACE.
-router.get('/:theme/*', theme_city_time_two, (req,res) => {
+router.get('/:theme/*', theme_city_time_two, (req, res) => {
     console.log('ma pani')
     if (req.data) res.status(200).send(req.data);
     if (req.startDate) {
@@ -212,34 +206,18 @@ router.get('/:theme/*', theme_city_time_two, (req,res) => {
 
 //@route GET 
 //@desc Get three by three combination of TIME, THEME AND SPACE.
-router.get('/:time/*/*', theme_city_time_three, (req,res) => {
+router.get('/:time/*/*', theme_city_time_three, (req, res) => {
     console.log('from three param route')
     gfsModel.filterTimeThemeSpace(req.startDate, req.theme_value, req.city, (err, file) => {
-        if (err) status(400).json({'err': req.err});
+        if (err) status(400).json({ 'err': req.err });
         res.send(file)
-    })
-    //console.log(req.time)
-    // axios.get(`https://nominatim.openstreetmap.org/search.php?q=${cityName}&polygon_geojson=1&format=json`)
-    //     .then((response) => {
-    //         const city = (response.data)[1].geojson.coordinates;
-    //         gfsModel.themeCity(city, theme_value, (err, file) => {
-    //             if (!file || file.length === 0) {
-    //                 req.error = err
-    //                 next()
-    //             }
-    //             req.data = file;
-    //             next()
-    //         })
-    //     })
-    //     .catch(error => {
-    //         res.send(error);
-    //     });
-})
+    });
+});
 
 //@route POST /upload
 //@desc Uploads file to DB
-router.post('/upload', upload.single('file'), (req,res) => {
-    res.json({file: req.file});
+router.post('/upload', upload.single('file'), (req, res) => {
+    res.json({ file: req.file });
     //res.redirect('/');
 });
 

@@ -17,6 +17,7 @@ router.get('/ninjas', function(req, res){
     Ninja.aggregate().near({
         near:{
         type: 'Point', 
+        index: '2dsphere',
         coordinates:[parseFloat(req.query.lng), parseFloat(req.query.lat)]
     },
         maxDistance: 90000, 
