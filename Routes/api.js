@@ -78,13 +78,6 @@ router.get('/', (req, res) => {
     res.render('index');
 })
 
-router.get('/hallo', (req, res) => {
-    gfsModel.within_radius(req.query.lng, req.query.lat, req.query.distance, (error, file) => {
-        if (error) res.send(error);
-        res.send(file)
-    });
-});
-
 //@route GET /
 //@desc Loads all files
 // router.get('/files', (req,res) => {
@@ -116,12 +109,19 @@ router.get('/hallo', (req, res) => {
 
 
 //@route GET /
-//@desc Loads particular theme data
+//@desc Loads particular theme data 
+//@ First checks if theme is in list and then check for req.query for nearby operation
 router.get('/:theme', function (req, res, next) {
     if (theme.includes(req.params.theme)) {
-        gfsModel.onlytheme(req.params.theme, (err, file) => {
+        (req.query.lng && req.query.lat) ? 
+        gfsModel.within_radius_theme(req.params.theme,req.query.lng, req.query.lat, req.query.distance, (error, file) => {
+            if (error) res.send(error);
+            res.send(file)
+        })
+         :
+         gfsModel.onlytheme(req.params.theme, (err, file) => {
             if (!file || file.length === 0) {
-                return res.status(400).json({
+                res.status(400).json({
                     err: 'From theme only'
                 });
             }

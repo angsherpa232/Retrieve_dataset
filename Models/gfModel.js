@@ -31,11 +31,11 @@ schemaGrid.statics.filterTime = function(startTime, cb) {
 };
 
 //@route GET /
-//@desc Load the data within the defined radius
-schemaGrid.statics.within_radius = function(lng,lat,distance,cb) {
-    this.find().near('metadata.location.coordinates',({center:{coordinates:[parseFloat(lng),parseFloat(lat)],
+//@desc Load only the chosen theme data within the defined radius
+schemaGrid.statics.within_radius_theme = function(theme,lng,lat,distance,cb) {
+    this.find().where('metadata.tags').equals(theme).near('metadata.location.coordinates',({center:{coordinates:[parseFloat(lng),parseFloat(lat)],
         type: 'Point'}, 
-        maxDistance: parseInt(distance),
+        maxDistance: parseInt(distance) || 1000,
         spherical: true,
         distanceField: 'dis'
     })).exec(cb);
