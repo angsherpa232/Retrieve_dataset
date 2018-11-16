@@ -107,6 +107,25 @@ router.get('/', (req, res) => {
 // });
 
 
+router.get('/:nearby', (req, res)=> {
+    //Get the radius and coordinates text and values
+    // let radius_and_coord = req.params.nearby.split("&");
+    // let radius_text = radius_and_coord[0].match(/[a-zA-Z]/gi).join("")
+    // //Get the first element and search for numbers only (accepts decimal value as well)
+    // let radius_value = radius_and_coord[0].match((/(\d+\.)?\d+/g))[0]
+    // let coord_value = radius_and_coord[1].match((/(\d+\.)?\d+/g))
+    // let coord_text = radius_and_coord[1].match(/[a-zA-Z]*?,[a-zA-Z]*/gi)[0]
+    // let lng = coord_value[0]
+    // let lat = coord_value[1]
+    // if (/^radius$/gi.test(radius_text) && (/^lat,lon$/gi.test(coord_text))) {
+    //     res.send(radius_value)
+    // } else {
+    //     res.send('falsch')
+    // }
+    console.log(req.params.nearby)
+    
+});
+
 
 //@route GET /
 //@desc Loads particular theme data 
@@ -191,8 +210,17 @@ router.get('/:time', validateTime, function (req, res) {
 //@desc Get two by two combination of TIME, THEME AND SPACE.
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
     console.log('ma pani')
-    if (req.data) res.status(200).send(req.data);
-    if (req.startDate) {
+    if (req.long && req.lat) {
+    gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
+        if (error) res.send(req.error);
+        res.send(file)
+    })
+}
+    else if (req.data) {
+        if (req.error) res.status(400).send(req.error);
+        res.status(200).send(req.data);
+    }
+    else if (req.startDate) {
         gfsModel.filterTime(req.startDate, (err, file) => {
             if (err) {
                 res.status(400).send(err)
@@ -200,12 +228,13 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
                 res.status(200).send(file)
             }
         })
+    } else {
+        res.send(req.error)
     }
-    //res.status(400).send('Bad request');
 })
 
-//@route GET 
-//@desc Get three by three combination of TIME, THEME AND SPACE.
+// //@route GET 
+// //@desc Get three by three combination of TIME, THEME AND SPACE.
 router.get('/:time/*/*', theme_city_time_three, (req, res) => {
     console.log('from three param route')
     gfsModel.filterTimeThemeSpace(req.startDate, req.theme_value, req.city, (err, file) => {

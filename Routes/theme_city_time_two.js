@@ -12,7 +12,7 @@ const {parseTime} = require('./timevalidate');
 const {getgeoJson} = require('../Middleware/fetch_geojson');
 
 //@desc Theme entered as first parameter and Time as second
-function if_theme_first(route) {
+function if_theme_first(route,next) {
     const UTC_based = Sherlock.parse(route[0])
     if ((themed.includes(route.theme) && UTC_based.startDate != null)) return { time: route[0], theme_value: route.theme };
     if ((themed.includes(route.theme) && UTC_based.startDate === null)) return { cityName: route[0], theme_value: route.theme };
@@ -45,6 +45,7 @@ function optimizer(req, next) {
 
 //@desc Loads all the files for chosen theme within the city
 async function file_within_city(cityName, theme_value, req, next) {
+    console.log('inside city')
     const fetchedCity = await getgeoJson(cityName, req, next);
     const city = (fetchedCity.data)[1].geojson.coordinates;
     gfsModel.themeCity(city, theme_value, (err, file) => {
@@ -58,7 +59,7 @@ async function file_within_city(cityName, theme_value, req, next) {
 }
 
 //route GET > /theme/* 
-//@desc Middleware for two parameter system
+//@desc Middleware for two parameter system. If the paramns contains "/" then it is redirected to 3 params route.
 let theme_city = function (req, res, next) {
     if ((/\//g).test(req.params[0])) {
         next('route')
@@ -66,10 +67,34 @@ let theme_city = function (req, res, next) {
     else {
     let cityName, theme_value, time;
     if (themed.includes(req.params.theme)) {
+        //Check if the radius is given or not. If true then nearby algorithm will be executed, if not else statement will be executed
+        if (/[=]/g.test(req.params[0])) {
+            console.log('aayo gorkhali')
+            let radius_and_coord = req.params[0].split("&");
+            let radius_text = radius_and_coord[0].match(/[a-zA-Z]/gi).join("")
+            //Get the first element and search for numbers only (accepts decimal value as well)
+            let radius_value = radius_and_coord[0].match((/(\d+\.)?\d+/g))[0]
+            let coord_value = radius_and_coord[1].match((/(\d+\.)?\d+/g))
+            let coord_text = radius_and_coord[1].match(/[a-zA-Z]*?,[a-zA-Z]*/gi)[0]
+            let long = coord_value[0]
+            let lat = coord_value[1]
+            if (/^radius$/gi.test(radius_text) && (/^long,lat$/gi.test(coord_text))) {
+                req.lat = lat;
+                req.long = long;
+                req.theme = req.params.theme;
+                req.distance = radius_value;
+                next()
+            } else {
+                req.error = 'Check for typos in the parameter';
+                next()
+            }
+        
+        } else {
         ({cityName,theme_value,...time} = if_theme_first(req.params))
         //Next time begin from this fn validateTime(time.time,next). Seems like validateTime has to be converted into 
         //independent function inside timevalidate.js file :D
         cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
+        }
     } else if (themed.includes(req.params[0])) {
         let {cityName,theme_value, ...time} = if_theme_second(req.params)
         cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
@@ -78,7 +103,7 @@ let theme_city = function (req, res, next) {
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
         parseTime(time.time, req, next);
     }
-    }
+}
 }
 
 
