@@ -8,13 +8,16 @@ function dateFormatter() {
 
 let parseTime = function (enteredTime, req, next, err) {
     const UTC_based = Sherlock.parse(enteredTime);
+    console.log('the utc based is ', UTC_based)
         if (UTC_based.startDate === null) {
             const is_valid = date_validator.validate(UTC_based.startDate);
             console.log(is_valid);
             req.is_valid = is_valid;
+            req.error = req.error;
             next()
         } else {
         if (!UTC_based.endDate){
+            console.log('from htere')
             const localTZ_based_start = dateFormatter.call(new Date(UTC_based.startDate));
             const localTZ_based_end = null;
             req.startDate = localTZ_based_start;

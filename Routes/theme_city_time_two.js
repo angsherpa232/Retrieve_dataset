@@ -13,6 +13,7 @@ const {getgeoJson} = require('../Middleware/fetch_geojson');
 
 //@desc Theme entered as first parameter and Time as second
 function if_theme_first(route,next) {
+    console.log('from theme first')
     const UTC_based = Sherlock.parse(route[0])
     if ((themed.includes(route.theme) && UTC_based.startDate != null)) return { time: route[0], theme_value: route.theme };
     if ((themed.includes(route.theme) && UTC_based.startDate === null)) return { cityName: route[0], theme_value: route.theme };
@@ -21,6 +22,7 @@ function if_theme_first(route,next) {
 
 //@desc Theme entered as second parameter and Time as first
 function if_theme_second(route) {
+    console.log('from theme second')
     const UTC_based = Sherlock.parse(route.theme)
     if ((themed.includes(route[0]) && UTC_based.startDate != null)) return { time: route.theme, theme_value: route[0] };
     if ((themed.includes(route[0]) && UTC_based.startDate === null)) return { cityName: route.theme, theme_value: route[0] };
@@ -29,6 +31,7 @@ function if_theme_second(route) {
 
 //@desc Time entered as first parameter and Theme not entered
 function if_theme_not_entered(route) {
+    console.log('from theme not entered')
     const UTC_based = Sherlock.parse(route.theme)
     if (UTC_based.startDate != null) return { time: route.theme, cityName: route[0] };
     if (UTC_based.startDate === null) return { time: route[0], cityName: route.theme };
@@ -47,15 +50,28 @@ function optimizer(req, next) {
 async function file_within_city(cityName, theme_value, req, next) {
     console.log('inside city')
     const fetchedCity = await getgeoJson(cityName, req, next);
+    if (fetchedCity.data.length === 0) {
+        req.error = 'Enter proper city Name.'
+        next();
+    } else {
     const city = (fetchedCity.data)[1].geojson.coordinates;
     gfsModel.themeCity(city, theme_value, (err, file) => {
         if (!file || file.length === 0) {
-            req.error = err
-            next()
-        }
+            if (Array.isArray(file)) {
+                req.length = file.length;
+                req.error = err;
+                next();
+            } else {
+                req.length = '0'
+                req.error = err;
+                next();
+            }
+        } else {
         req.data = file;
         next()
+        }
     });
+}
 }
 
 //route GET > /theme/* 
@@ -101,6 +117,7 @@ let theme_city = function (req, res, next) {
     } else {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
+        console.log('this items are ',cityName, time.time, theme_value)
         parseTime(time.time, req, next);
     }
 }

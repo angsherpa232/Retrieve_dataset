@@ -107,37 +107,11 @@ router.get('/', (req, res) => {
 // });
 
 
-router.get('/:nearby', (req, res)=> {
-    //Get the radius and coordinates text and values
-    // let radius_and_coord = req.params.nearby.split("&");
-    // let radius_text = radius_and_coord[0].match(/[a-zA-Z]/gi).join("")
-    // //Get the first element and search for numbers only (accepts decimal value as well)
-    // let radius_value = radius_and_coord[0].match((/(\d+\.)?\d+/g))[0]
-    // let coord_value = radius_and_coord[1].match((/(\d+\.)?\d+/g))
-    // let coord_text = radius_and_coord[1].match(/[a-zA-Z]*?,[a-zA-Z]*/gi)[0]
-    // let lng = coord_value[0]
-    // let lat = coord_value[1]
-    // if (/^radius$/gi.test(radius_text) && (/^lat,lon$/gi.test(coord_text))) {
-    //     res.send(radius_value)
-    // } else {
-    //     res.send('falsch')
-    // }
-    console.log(req.params.nearby)
-    
-});
-
-
 //@route GET /
 //@desc Loads particular theme data 
 //@ First checks if theme is in list and then check for req.query for nearby operation
 router.get('/:theme', function (req, res, next) {
     if (theme.includes(req.params.theme)) {
-        (req.query.lng && req.query.lat) ? 
-        gfsModel.within_radius_theme(req.params.theme,req.query.lng, req.query.lat, req.query.distance, (error, file) => {
-            if (error) res.send(error);
-            res.send(file)
-        })
-         :
          gfsModel.onlytheme(req.params.theme, (err, file) => {
             if (!file || file.length === 0) {
                 res.status(400).json({
@@ -176,11 +150,18 @@ router.delete('/files/:id', (req, res) => {
 //@route GET /
 //@desc Load all the files within the city
 router.get('/:cityName', geojsonPoly, (req, res, next) => {
+    console.log('from city')
     gfsModel.inside(req.city, (err, file) => {
         if (!file || file.length === 0) {
-            res.status(404).json({
-                err: req.error
-            });
+            if (Array.isArray(file)) {
+                res.status(200).json({
+                    'length': file.length
+                });
+            } else {
+                res.status(200).json({
+                    'err': 'No data found.'
+                });
+            }
         } else {
             res.status(200).send(file)
         }
@@ -201,9 +182,8 @@ router.get('/:time', validateTime, function (req, res) {
             }
         })
     } else {
-        res.send('Please check for typos.')
+        res.send('Please check for typos in the parameter.')
     }
-
 });
 
 //@route GET 
@@ -211,17 +191,24 @@ router.get('/:time', validateTime, function (req, res) {
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
     console.log('ma pani')
     if (req.long && req.lat) {
+        console.log('pp')
     gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
         if (error) res.send(req.error);
         res.send(file)
     })
 }
     else if (req.data) {
-        if (req.error) res.status(400).send(req.error);
-        res.status(200).send(req.data);
+        if (req.time) {
+            console.log(req.data.map(x=>console.log(x)))
+            //gfsModel.timeSpace(req.data.metadata.DateTime)
+        }
+        res.status(200).send(req.data)
     }
+
     else if (req.startDate) {
+        console.log('from this filter')
         gfsModel.filterTime(req.startDate, (err, file) => {
+            console.log('this is bad')
             if (err) {
                 res.status(400).send(err)
             } else {
@@ -229,7 +216,10 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
             }
         })
     } else {
-        res.send(req.error)
+        res.status(400).json({
+            'length': req.length,
+            'error': req.error
+        })
     }
 })
 
@@ -238,7 +228,21 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
 router.get('/:time/*/*', theme_city_time_three, (req, res) => {
     console.log('from three param route')
     gfsModel.filterTimeThemeSpace(req.startDate, req.theme_value, req.city, (err, file) => {
-        if (err) status(400).json({ 'err': req.err });
+
+        if (!file || file.length === 0) {
+            if (Array.isArray(file)) {
+                res.status(200).json({
+                    'length': file.length
+                });
+            } else {
+                res.status(200).json({
+                    'err': 'No data found.'
+                });
+            }
+        } else {
+            res.status(200).send(file)
+        }
+        //if (err) res.status(400).json({ 'err': req.error });
         res.send(file)
     });
 });
