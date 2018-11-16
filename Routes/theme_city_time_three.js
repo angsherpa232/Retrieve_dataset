@@ -44,11 +44,32 @@ function optimizer(req, next) {
 }
 
 //@desc Loads the geojson for city polygon
-async function file_within_city_with_time (cityName, theme_value, time, req, next) {
+async function file_within_city_with_time(cityName, theme_value, time, req, next) {
     const fetchedCity = await getgeoJson(cityName, req, next);
-    req.city = (fetchedCity.data)[1].geojson.coordinates;
-    req.theme_value = theme_value;
-    parseTime(time,req,next);
+    if (fetchedCity.data.length === 0) {
+        req.error = 'Enter proper city Name.'
+        req.theme_value = theme_value;
+        parseTime(time, req, next);
+    } else {
+        try{
+            req.city = (fetchedCity.data)[1].geojson.coordinates;
+            req.theme_value = theme_value;
+            parseTime(time, req, next);
+        } catch (e) {
+            req.error = e;
+            next()
+        }
+        // if ((fetchedCity.data) != 'undefined') {
+        //     console.log('this is ')
+        //     req.city = (fetchedCity.data)[1].geojson.coordinates;
+        //     req.theme_value = theme_value;
+        //     parseTime(time, req, next);
+        // } else {
+        //     req.length = '0'
+        //     req.error = 'No file found in given city.'
+        //     next();
+        // }
+    }
 }
 
 //route GET > /theme/*/* 

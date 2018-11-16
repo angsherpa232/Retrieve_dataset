@@ -31,6 +31,13 @@ schemaGrid.statics.filterTime = function(startTime, cb) {
 };
 
 //@route GET /
+//@desc Load the data based on TIME
+schemaGrid.statics.timeSpace = function(startTime, coordinate, cb) {
+    this.find().where('metadata.DateTime').equals(startTime).where('metadata.location.coordinates').within().geometry({ type: 'Polygon', coordinates: coordinate })
+    .exec(cb);
+};
+
+//@route GET /
 //@desc Load only the chosen theme data within the defined radius
 schemaGrid.statics.within_radius_theme = function(theme,lng,lat,distance,cb) {
     this.find().where('metadata.tags').equals(theme).near('metadata.location.coordinates',({center:{coordinates:[parseFloat(lng),parseFloat(lat)],

@@ -107,18 +107,11 @@ router.get('/', (req, res) => {
 // });
 
 
-
 //@route GET /
 //@desc Loads particular theme data 
 //@ First checks if theme is in list and then check for req.query for nearby operation
 router.get('/:theme', function (req, res, next) {
     if (theme.includes(req.params.theme)) {
-        (req.query.lng && req.query.lat) ? 
-        gfsModel.within_radius_theme(req.params.theme,req.query.lng, req.query.lat, req.query.distance, (error, file) => {
-            if (error) res.send(error);
-            res.send(file)
-        })
-         :
          gfsModel.onlytheme(req.params.theme, (err, file) => {
             if (!file || file.length === 0) {
                 res.status(400).json({
@@ -157,11 +150,18 @@ router.delete('/files/:id', (req, res) => {
 //@route GET /
 //@desc Load all the files within the city
 router.get('/:cityName', geojsonPoly, (req, res, next) => {
+    console.log('from city')
     gfsModel.inside(req.city, (err, file) => {
         if (!file || file.length === 0) {
-            res.status(404).json({
-                err: req.error
-            });
+            if (Array.isArray(file)) {
+                res.status(200).json({
+                    'Length': file.length
+                });
+            } else {
+                res.status(200).json({
+                    'Status': 'No data found.'
+                });
+            }
         } else {
             res.status(200).send(file)
         }
@@ -182,35 +182,65 @@ router.get('/:time', validateTime, function (req, res) {
             }
         })
     } else {
-        res.send('Please check for typos.')
+        res.send('Please check for typos in the parameter.')
     }
-
 });
 
 //@route GET 
 //@desc Get two by two combination of TIME, THEME AND SPACE.
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
     console.log('ma pani')
-    if (req.data) res.status(200).send(req.data);
-    if (req.startDate) {
-        gfsModel.filterTime(req.startDate, (err, file) => {
+    if (req.long && req.lat) {
+        console.log('pp')
+    gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
+        if (error) res.send(req.error);
+        res.send(file)
+    })
+}
+    else if (req.data) {
+        console.log('opop')
+        res.status(200).send(req.data)
+    }
+
+    else if (req.startDate) {
+        console.log('from this filter')
+        gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
+            console.log('this is bad')
             if (err) {
                 res.status(400).send(err)
             } else {
                 res.status(200).send(file)
             }
         })
+    } else {
+        res.status(400).json({
+            'length': req.length,
+            'error': req.error
+        })
     }
-    //res.status(400).send('Bad request');
 })
 
-//@route GET 
-//@desc Get three by three combination of TIME, THEME AND SPACE.
+// //@route GET 
+// //@desc Get three by three combination of TIME, THEME AND SPACE.
 router.get('/:time/*/*', theme_city_time_three, (req, res) => {
     console.log('from three param route')
     gfsModel.filterTimeThemeSpace(req.startDate, req.theme_value, req.city, (err, file) => {
-        if (err) status(400).json({ 'err': req.err });
-        res.send(file)
+
+        if (!file || file.length === 0) {
+            if (Array.isArray(file)) {
+                res.status(200).json({
+                    'length': file.length
+                });
+            } else {
+                res.status(200).json({
+                    'err': 'No data found.'
+                });
+            }
+        } else {
+            res.status(200).send(file)
+        }
+        //if (err) res.status(400).json({ 'err': req.error });
+        
     });
 });
 
