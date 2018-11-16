@@ -155,11 +155,11 @@ router.get('/:cityName', geojsonPoly, (req, res, next) => {
         if (!file || file.length === 0) {
             if (Array.isArray(file)) {
                 res.status(200).json({
-                    'length': file.length
+                    'Length': file.length
                 });
             } else {
                 res.status(200).json({
-                    'err': 'No data found.'
+                    'Status': 'No data found.'
                 });
             }
         } else {
@@ -197,17 +197,14 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
         res.send(file)
     })
 }
-    else if (req.data) {
-        if (req.time) {
-            console.log(req.data.map(x=>console.log(x)))
-            //gfsModel.timeSpace(req.data.metadata.DateTime)
-        }
-        res.status(200).send(req.data)
-    }
+    // else if (req.data) {
+    //     console.log('opop')
+    //     res.status(200).send(req.data)
+    // }
 
     else if (req.startDate) {
         console.log('from this filter')
-        gfsModel.filterTime(req.startDate, (err, file) => {
+        gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
             console.log('this is bad')
             if (err) {
                 res.status(400).send(err)

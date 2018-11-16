@@ -14,13 +14,12 @@ async function getgeoJson(cityName, req, next) {
 let geojsonPoly = async function (req, res, next) {
     const fetchedCity = await getgeoJson(req.params.cityName, req, next);
     if (fetchedCity.data.length === 0) {
-        console.log('from data.length checker')
         next('route');
     } else {
-        console.log('this is the ')
         req.city = (fetchedCity.data)[1].geojson.coordinates;
         next();
     }
 };
+
 
 module.exports = {geojsonPoly, getgeoJson};

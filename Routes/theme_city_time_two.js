@@ -74,6 +74,27 @@ async function file_within_city(cityName, theme_value, req, next) {
 }
 }
 
+
+//@desc Loads all the files for chosen theme within the city
+async function getGeoJson(cityName, time, req, next) {
+    console.log('inside city time scope')
+    const fetchedCity = await getgeoJson(cityName, req, next);
+    if (fetchedCity.data.length === 0) {
+        req.error = 'Enter proper city Name.'
+        next();
+    } else {
+        if ((fetchedCity.data) != 'undefined') {
+            const city = (fetchedCity.data)[1].geojson.coordinates;
+            req.city = city;
+            parseTime(time, req, next, req.city);
+        } else {
+            req.length = '0'
+            req.error = 'No file found in given city.'
+            next();
+        }
+    }
+}
+
 //route GET > /theme/* 
 //@desc Middleware for two parameter system. If the paramns contains "/" then it is redirected to 3 params route.
 let theme_city = function (req, res, next) {
@@ -118,7 +139,8 @@ let theme_city = function (req, res, next) {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
         console.log('this items are ',cityName, time.time, theme_value)
-        parseTime(time.time, req, next);
+        //parseTime(time.time, cityName,req, next);
+        getGeoJson(cityName,time.time,req,next)
     }
 }
 }
