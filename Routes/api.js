@@ -197,10 +197,10 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
         res.send(file)
     })
 }
-    // else if (req.data) {
-    //     console.log('opop')
-    //     res.status(200).send(req.data)
-    // }
+    else if (req.data) {
+        console.log('opop')
+        res.status(200).send(req.data)
+    }
 
     else if (req.startDate) {
         console.log('from this filter')
@@ -240,7 +240,7 @@ router.get('/:time/*/*', theme_city_time_three, (req, res) => {
             res.status(200).send(file)
         }
         //if (err) res.status(400).json({ 'err': req.error });
-        res.send(file)
+        
     });
 });
 

@@ -83,13 +83,15 @@ async function getGeoJson(cityName, time, req, next) {
         req.error = 'Enter proper city Name.'
         next();
     } else {
-        if ((fetchedCity.data) != 'undefined') {
+        try {
             const city = (fetchedCity.data)[1].geojson.coordinates;
             req.city = city;
             parseTime(time, req, next, req.city);
-        } else {
+        } catch (e) {
+            console.log('from two')
             req.length = '0'
             req.error = 'No file found in given city.'
+            req.error = e;
             next();
         }
     }
