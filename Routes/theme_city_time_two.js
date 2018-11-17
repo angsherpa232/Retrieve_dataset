@@ -5,7 +5,7 @@ const Sherlock = require('sherlockjs');
 const gfsModel = require('../Models/gfModel');
 
 //THEME ENLISTED
-const themed = ['population', 'crime'];
+const themed = ['population', 'crime', 'migration','transport','economy','landuse','air quality'];
 
 //MIDDLEWARE
 const {parseTime} = require('./timevalidate');
