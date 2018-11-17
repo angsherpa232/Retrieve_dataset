@@ -26,7 +26,7 @@ const { validateTime } = require('./timevalidate');
 const { geojsonPoly } = require('../Middleware/fetch_geojson');
 
 //THEME ENLISTED
-const theme = ['population', 'crime'];
+const theme = ['population', 'crime', 'migration','transport','economy','landuse','air quality'];
 
 //FOR FILE UPLOAD/DOWNLOAD
 const conn = mongoose.createConnection(config.DATABASE);
@@ -57,10 +57,11 @@ const storage = new GridFsStorage({
                     metadata: {
                         location: {
                             "coordinates":
-                                [7.64986213134766,
-                                    51.6843680652201]
+                                [
+                                7.634811401367187, 51.966057850187845
+                                ]
                         },
-                        tags: 'population',
+                        tags: 'migration',
                         DateTime: '2017-11-03' //day-month-year
                     }
                 };
@@ -122,7 +123,6 @@ router.get('/:theme', function (req, res, next) {
         })
     } else next('route')
 }, function (req, res, next) {
-    console.log('ho ta')
 });
 
 
@@ -158,9 +158,10 @@ router.get('/:cityName', geojsonPoly, (req, res, next) => {
                     'Length': file.length
                 });
             } else {
-                res.status(200).json({
-                    'Status': 'No data found.'
-                });
+                // res.status(200).json({
+                //     'Status': 'No data found.'
+                // });
+                next('route');
             }
         } else {
             res.status(200).send(file)
@@ -191,21 +192,18 @@ router.get('/:time', validateTime, function (req, res) {
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
     console.log('ma pani')
     if (req.long && req.lat) {
-        console.log('pp')
     gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
         if (error) res.send(req.error);
         res.send(file)
     })
 }
     else if (req.data) {
-        console.log('opop')
         res.status(200).send(req.data)
     }
 
     else if (req.startDate) {
         console.log('from this filter')
         gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
-            console.log('this is bad')
             if (err) {
                 res.status(400).send(err)
             } else {
