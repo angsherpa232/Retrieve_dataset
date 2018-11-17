@@ -14,24 +14,24 @@ const {getgeoJson} = require('../Middleware/fetch_geojson');
 //@desc Theme entered as first parameter and Time as second
 function if_theme_first(route) {
     const UTC_based = Sherlock.parse(route[0])
-    if ((themed.includes(route.time) && UTC_based.startDate != null)) return { time: route[0], theme_value: route.time, cityName: route[1] };
-    else if ((themed.includes(route.time) && UTC_based.startDate === null)) return { time: route[1],theme_value: route.time, cityName: route[0] };
+    if ((themed.includes((route.time).toLowerCase()) && UTC_based.startDate != null)) return { time: route[0], theme_value: route.time, cityName: route[1] };
+    else if ((themed.includes((route.time).toLowerCase()) && UTC_based.startDate === null)) return { time: route[1],theme_value: route.time, cityName: route[0] };
     else console.log('Check for typos in the parameters')
 }
 
 //@desc Theme entered as second parameter and Time as first
 function if_theme_second(route) {
     const UTC_based = Sherlock.parse(route.time)
-    if ((themed.includes(route[0]) && UTC_based.startDate != null)) return { time: route.time, theme_value: route[0], cityName: route[1] };
-    if ((themed.includes(route[0]) && UTC_based.startDate === null)) return { time: route[1], theme_value: route[0], cityName: route.time };
+    if ((themed.includes(route[0].toLowerCase()) && UTC_based.startDate != null)) return { time: route.time, theme_value: route[0], cityName: route[1] };
+    if ((themed.includes(route[0].toLowerCase()) && UTC_based.startDate === null)) return { time: route[1], theme_value: route[0], cityName: route.time };
     return 'Check for typos in the parameters';
 }
 
 //@desc Time entered as first parameter and Theme not entered
 function if_theme_third(route) {
     const UTC_based = Sherlock.parse(route[0])
-    if ((themed.includes(route[1]) && UTC_based.startDate != null)) return { time: route[0], theme_value: route[1], cityName: route.time };
-    if ((themed.includes(route[1]) && UTC_based.startDate === null)) return { time: route.time, theme_value: route[1], cityName: route[0] };
+    if ((themed.includes(route[1].toLowerCase()) && UTC_based.startDate != null)) return { time: route[0], theme_value: route[1], cityName: route.time };
+    if ((themed.includes(route[1].toLowerCase()) && UTC_based.startDate === null)) return { time: route.time, theme_value: route[1], cityName: route[0] };
     return 'Check for typos in the parameters'
 }
 
@@ -76,7 +76,7 @@ async function file_within_city_with_time(cityName, theme_value, time, req, next
 //@desc Middleware for two parameter system
 let three_param_route = function (req, res, next) {
     let time, theme_value, cityName;
-    if (themed.includes(req.params.time)) {
+    if (themed.includes((req.params.time).toLowerCase())) {
         ({time,theme_value,cityName} = if_theme_first(req.params))
         console.log('from theme first')
         
