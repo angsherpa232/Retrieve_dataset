@@ -51,7 +51,7 @@ async function file_within_city(cityName, theme_value, req, next) {
     console.log('inside city')
     const fetchedCity = await getgeoJson(cityName, req, next);
     if (fetchedCity.data.length === 0) {
-        req.error = 'Enter proper city Name.'
+        req.error = 'Oops, typos in the parameter.'
         next();
     } else {
     const city = (fetchedCity.data)[1].geojson.coordinates;
@@ -80,7 +80,7 @@ async function getGeoJson(cityName, time, req, next) {
     console.log('inside city time scope')
     const fetchedCity = await getgeoJson(cityName, req, next);
     if (fetchedCity.data.length === 0) {
-        req.error = 'Enter proper city Name.'
+        req.error = 'Oops, typos in the parameter.'
         next();
     } else {
         try {
@@ -132,15 +132,14 @@ let theme_city = function (req, res, next) {
         ({cityName,theme_value,...time} = if_theme_first(req.params))
         //Next time begin from this fn validateTime(time.time,next). Seems like validateTime has to be converted into 
         //independent function inside timevalidate.js file :D
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
         }
     } else if (themed.includes(((req.params[0]).toLowerCase()))) {
         let {cityName,theme_value, ...time} = if_theme_second(req.params)
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
     } else {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
-        console.log('this items are ',cityName, time.time, theme_value)
         //parseTime(time.time, cityName,req, next);
         getGeoJson(cityName,time.time,req,next)
     }

@@ -31,6 +31,12 @@ schemaGrid.statics.filterTime = function(startTime, cb) {
 };
 
 //@route GET /
+//@desc Load the data based on TIME and THEME
+schemaGrid.statics.themeTime = function(startTime, theme, cb) {
+    this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).exec(cb);
+};
+
+//@route GET /
 //@desc Load the data based on TIME
 schemaGrid.statics.timeSpace = function(startTime, coordinate, cb) {
     this.find().where('metadata.DateTime').equals(startTime).where('metadata.location.coordinates').within().geometry({ type: 'Polygon', coordinates: coordinate })

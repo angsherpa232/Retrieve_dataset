@@ -58,10 +58,11 @@ const storage = new GridFsStorage({
                         location: {
                             "coordinates":
                                 [
-                                7.634811401367187, 51.966057850187845
+                                    13.7493896484375,
+                                    51.08411588813325
                                 ]
                         },
-                        tags: 'migration',
+                        tags: 'air quality',
                         DateTime: '2017-11-03' //day-month-year
                     }
                 };
@@ -183,7 +184,9 @@ router.get('/:time', validateTime, function (req, res) {
             }
         })
     } else {
-        res.send('Please check for typos in the parameter.')
+        res.status(400).json({
+            'error':'Oops, typos in the parameter.'
+        })
     }
 });
 
@@ -199,6 +202,16 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
 }
     else if (req.data) {
         res.status(200).send(req.data)
+    }
+
+    else if(req.startDate && req.theme_value) {
+        gfsModel.themeTime(req.startDate, req.theme_value, (err, file) => {
+            if (err) {
+                res.status(400).send(err)
+            } else {
+                res.status(200).send(file)
+            }
+        })
     }
 
     else if (req.startDate) {
