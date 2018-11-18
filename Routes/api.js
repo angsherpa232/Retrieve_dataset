@@ -244,8 +244,8 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
 // //@route GET 
 // //@desc Get three by three combination of TIME, THEME AND SPACE.
 router.get('/:time/*/*', theme_city_time_three, (req, res) => {
-    console.log('from three param route')
-    gfsModel.filterTimeThemeSpace(req.startDate, req.theme_value, req.city, (err, file) => {
+    console.log('from three param route')    
+    gfsModel.filterTimeThemeSpace(req.startDate, req.endDate,req.theme_value, req.city, (err, file) => {
 
         if (!file || file.length === 0) {
             if (Array.isArray(file)) {

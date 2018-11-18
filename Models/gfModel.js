@@ -65,9 +65,14 @@ schemaGrid.statics.within_radius_theme = function(theme,lng,lat,distance,cb) {
 
 //@route GET /
 //@desc Load the data based on all three params (TIME, THEME and SPACE)
-schemaGrid.statics.filterTimeThemeSpace = function(startTime, theme, coordinate, cb) {
-    this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).where('metadata.location.coordinates').within().geometry({type:'Polygon',coordinates: coordinate })
-   .exec(cb)
+schemaGrid.statics.filterTimeThemeSpace = function(startTime, endTime,theme, coordinate, cb) {
+    if (!endTime) {
+        this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).where('metadata.location.coordinates').within().geometry({type:'Polygon',coordinates: coordinate })
+        .exec(cb)
+} else if(endTime){
+    this.find().where('metadata.DateTime').gt(startTime).lt(endTime).where('metadata.tags').equals(theme).where('metadata.location.coordinates').within().geometry({type:'Polygon',coordinates: coordinate })
+    .exec(cb)
+}
 }
 
 
