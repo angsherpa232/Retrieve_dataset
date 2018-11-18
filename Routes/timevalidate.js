@@ -22,7 +22,6 @@ let parseTime = function (enteredTime,req, next, city,theme_value) {
     console.log('the utc based is ', UTC_based)
         if (UTC_based.startDate === null) {
             const is_valid = date_validator.validate(UTC_based.startDate);
-            console.log(is_valid);
             req.is_valid = is_valid;
             next()
         } else {
@@ -36,7 +35,6 @@ let parseTime = function (enteredTime,req, next, city,theme_value) {
             req.is_valid = true;
             req.city = city;
             req.theme_value = theme_value;
-            //console.log(UTC_based)
             next();
         } else if (UTC_based.endDate){
             console.log('from with end date')

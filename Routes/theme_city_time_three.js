@@ -59,16 +59,6 @@ async function file_within_city_with_time(cityName, theme_value, time, req, next
             req.error = e;
             next()
         }
-        // if ((fetchedCity.data) != 'undefined') {
-        //     console.log('this is ')
-        //     req.city = (fetchedCity.data)[1].geojson.coordinates;
-        //     req.theme_value = theme_value;
-        //     parseTime(time, req, next);
-        // } else {
-        //     req.length = '0'
-        //     req.error = 'No file found in given city.'
-        //     next();
-        // }
     }
 }
 
@@ -90,14 +80,12 @@ let three_param_route = function (req, res, next) {
         //cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
         console.log('from theme sec')
-        console.log(time,theme_value,cityName)
         file_within_city_with_time(cityName,theme_value,time, req,next)
     } else {
         //run the code that checks between time and space
         ({time, theme_value, cityName} = if_theme_third(req.params))
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
         console.log('from theme third')
-        console.log(time,theme_value,cityName)
         file_within_city_with_time(cityName,theme_value,time, req,next)
     }
 }

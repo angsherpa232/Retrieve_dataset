@@ -178,10 +178,8 @@ router.get('/:time', validateTime, function (req, res) {
     if (req.is_valid) {
         gfsModel.filterTime(req.startDate, req.endDate,(err, file) => {
             if (err) {
-                console.log('inside time error')
                 res.status(400).send(err)
             } else {
-                console.log('inside time else')
                 res.status(200).send(file)
             }
         })
@@ -195,10 +193,7 @@ router.get('/:time', validateTime, function (req, res) {
 //@route GET 
 //@desc Get two by two combination of TIME, THEME AND SPACE.
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
-    console.log('ma pani')
-    console.log('the start ',req.startDate)
-    console.log('the end ',req.endDate)
-    console.log('the theme ',req.theme_value)
+    console.log('inside two param route')
     if (req.long && req.lat) {
     gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
         if (error) res.send(req.error);
@@ -219,7 +214,7 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
             }
         })
     } else if (req.city) {
-        gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
+        gfsModel.timeSpace(req.startDate, req.endDate, req.city,(err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {

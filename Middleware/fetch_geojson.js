@@ -18,13 +18,10 @@ let geojsonPoly = async function (req, res, next) {
     } else {
         try{
         req.city = (fetchedCity.data)[1].geojson.coordinates;
-        //console.log(req.city) //Check here if city supports or not
         next();
         } catch (e){
-            console.log('from two')
         req.length = '0'
         req.error = 'No file found in given city.'
-        //req.error = e;
         next();
         }
         
