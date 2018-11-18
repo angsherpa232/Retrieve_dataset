@@ -26,8 +26,12 @@ schemaGrid.statics.themeCity =  function(coordinate,theme, cb){
 
 //@route GET /
 //@desc Load the data based on TIME
-schemaGrid.statics.filterTime = function(startTime, cb) {
-    this.find().where('metadata.DateTime').equals(startTime).exec(cb);
+schemaGrid.statics.filterTime = function(startTime, endTime,cb) {
+    if (!endTime) {
+        this.find().where('metadata.DateTime').equals(startTime).exec(cb);
+} else if(endTime){
+    this.find().where('metadata.DateTime').gt(startTime).lt(endTime).exec(cb);
+}
 };
 
 //@route GET /

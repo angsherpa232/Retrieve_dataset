@@ -176,10 +176,13 @@ router.get('/:cityName', geojsonPoly, (req, res, next) => {
 router.get('/:time', validateTime, function (req, res) {
     console.log('inside time')
     if (req.is_valid) {
-        gfsModel.filterTime(req.startDate, (err, file) => {
+        console.log('from outside API ',req.startDate, req.endDate)
+        gfsModel.filterTime(req.startDate, req.endDate,(err, file) => {
             if (err) {
+                console.log('inside time error')
                 res.status(400).send(err)
             } else {
+                console.log('inside time else')
                 res.status(200).send(file)
             }
         })
