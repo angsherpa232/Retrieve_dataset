@@ -54,7 +54,7 @@ async function file_within_city_with_time(cityName, theme_value, time, req, next
         try{
             req.city = (fetchedCity.data)[1].geojson.coordinates;
             req.theme_value = theme_value;
-            parseTime(time, req, next);
+            parseTime(time, req, next,req.city,theme_value);
         } catch (e) {
             req.error = e;
             next()
@@ -98,9 +98,6 @@ let three_param_route = function (req, res, next) {
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
         console.log('from theme third')
         console.log(time,theme_value,cityName)
-        if (time  === 'undefined') console.log('typos from time man')
-        if (theme_value  === 'undefined') console.log('typos from theme_value man')
-        if (cityName === 'undefined') console.log('typos cityName man')
         file_within_city_with_time(cityName,theme_value,time, req,next)
     }
 }

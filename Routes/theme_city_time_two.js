@@ -54,29 +54,36 @@ async function file_within_city(cityName, theme_value, req, next) {
         req.error = 'Oops, typos in the parameter.'
         next();
     } else {
-    const city = (fetchedCity.data)[1].geojson.coordinates;
-    gfsModel.themeCity(city, theme_value, (err, file) => {
-        if (!file || file.length === 0) {
-            if (Array.isArray(file)) {
-                req.length = file.length;
-                req.error = err;
-                next();
-            } else {
-                req.length = '0'
-                req.error = err;
-                next();
-            }
-        } else {
-        req.data = file;
-        next()
+        try {
+            const city = (fetchedCity.data)[1].geojson.coordinates;
+            gfsModel.themeCity(city, theme_value, (err, file) => {
+                if (!file || file.length === 0) {
+                    if (Array.isArray(file)) {
+                        req.length = file.length;
+                        req.error = err;
+                        next();
+                    } else {
+                        req.length = '0'
+                        req.error = err;
+                        next();
+                    }
+                } else {
+                    req.data = file;
+                    next()
+                }
+            });
+        } catch (e) {
+            req.length = '0'
+            req.error = 'No file found in given city.'
+            req.error = e;
+            next();
         }
-    });
-}
+    }
 }
 
 
 //@desc Loads all the files for chosen theme within the city
-async function getGeoJson(cityName, time, req, next) {
+async function getGeoJson(cityName, time, req, next, theme_value) {
     console.log('inside city time scope')
     const fetchedCity = await getgeoJson(cityName, req, next);
     if (fetchedCity.data.length === 0) {
@@ -86,7 +93,8 @@ async function getGeoJson(cityName, time, req, next) {
         try {
             const city = (fetchedCity.data)[1].geojson.coordinates;
             req.city = city;
-            parseTime(time, req, next, req.city);
+            req.theme_value = theme_value;
+            parseTime(time, req, next, req.city, req.theme_value);
         } catch (e) {
             console.log('from two')
             req.length = '0'
@@ -141,7 +149,7 @@ let theme_city = function (req, res, next) {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
         //parseTime(time.time, cityName,req, next);
-        getGeoJson(cityName,time.time,req,next)
+        getGeoJson(cityName,time.time,req,next,theme_value)
     }
 }
 }

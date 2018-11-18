@@ -204,29 +204,34 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
         res.status(200).send(req.data)
     }
 
-    else if(req.startDate && req.theme_value) {
+    else if(req.startDate) {
+        if (req.theme_value) {
         gfsModel.themeTime(req.startDate, req.theme_value, (err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {
-                res.status(200).send(file)
+                file.length === 0 ? res.status(200).send("0 file found.") : res.status(200).send(file)
             }
         })
-    }
-
-    else if (req.startDate) {
-        console.log('from this filter')
+    } else if (req.city) {
         gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {
-                res.status(200).send(file)
+                file.length === 0 ? res.status(200).send("0 file found.") : res.status(200).send(file)
             }
         })
     } else {
         res.status(400).json({
+            'error':'Oops, typos in the parameter.'
+        })
+    }
+    }
+    else {
+        res.status(400).json({
             'length': req.length,
-            'error': req.error
+            'error': req.error,
+            'error': 'Oops, typos in the parameter.'
         })
     }
 })
