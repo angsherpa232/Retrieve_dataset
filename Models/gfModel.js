@@ -36,8 +36,12 @@ schemaGrid.statics.filterTime = function(startTime, endTime,cb) {
 
 //@route GET /
 //@desc Load the data based on TIME and THEME
-schemaGrid.statics.themeTime = function(startTime, theme, cb) {
-    this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).exec(cb);
+schemaGrid.statics.themeTime = function(startTime,endTime,theme, cb) {
+    if (!endTime) {
+        this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).exec(cb);
+} else if(endTime){
+    this.find().where('metadata.DateTime').gt(startTime).lt(endTime).where('metadata.tags').equals(theme).exec(cb);
+}
 };
 
 //@route GET /

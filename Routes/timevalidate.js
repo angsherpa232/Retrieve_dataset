@@ -38,7 +38,7 @@ let parseTime = function (enteredTime,req, next, city,theme_value) {
             req.theme_value = theme_value;
             //console.log(UTC_based)
             next();
-        } else {
+        } else if (UTC_based.endDate){
             console.log('from with end date')
             const localTZ_based_end = dateFormatterEnd.call(new Date(UTC_based.endDate));
             const localTZ_based_start = dateFormatterStart.call(new Date(UTC_based.startDate));

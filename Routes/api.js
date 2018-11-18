@@ -176,7 +176,6 @@ router.get('/:cityName', geojsonPoly, (req, res, next) => {
 router.get('/:time', validateTime, function (req, res) {
     console.log('inside time')
     if (req.is_valid) {
-        console.log('from outside API ',req.startDate, req.endDate)
         gfsModel.filterTime(req.startDate, req.endDate,(err, file) => {
             if (err) {
                 console.log('inside time error')
@@ -197,6 +196,9 @@ router.get('/:time', validateTime, function (req, res) {
 //@desc Get two by two combination of TIME, THEME AND SPACE.
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
     console.log('ma pani')
+    console.log('the start ',req.startDate)
+    console.log('the end ',req.endDate)
+    console.log('the theme ',req.theme_value)
     if (req.long && req.lat) {
     gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
         if (error) res.send(req.error);
@@ -209,7 +211,7 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
 
     else if(req.startDate) {
         if (req.theme_value) {
-        gfsModel.themeTime(req.startDate, req.theme_value, (err, file) => {
+        gfsModel.themeTime(req.startDate, req.endDate,req.theme_value, (err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {

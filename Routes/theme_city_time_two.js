@@ -140,11 +140,12 @@ let theme_city = function (req, res, next) {
         ({cityName,theme_value,...time} = if_theme_first(req.params))
         //Next time begin from this fn validateTime(time.time,next). Seems like validateTime has to be converted into 
         //independent function inside timevalidate.js file :D
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,cityName,theme_value)
         }
     } else if (themed.includes(((req.params[0]).toLowerCase()))) {
         let {cityName,theme_value, ...time} = if_theme_second(req.params)
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
+        console.log('The original theme is ',time)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,cityName,theme_value)
     } else {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
