@@ -6,14 +6,13 @@ function dateFormatter() {
 	return this.getFullYear() + '-' + ('0'+(this.getMonth()+1)).slice(-2)+ '-' +(('0'+this.getDate()).slice(-2));
 }
 
-let parseTime = function (enteredTime,req, next, err) {
+let parseTime = function (enteredTime,req, next, city,theme_value) {
     const UTC_based = Sherlock.parse(enteredTime);
     console.log('the utc based is ', UTC_based)
         if (UTC_based.startDate === null) {
             const is_valid = date_validator.validate(UTC_based.startDate);
             console.log(is_valid);
             req.is_valid = is_valid;
-            req.error = req.error;
             next()
         } else {
         if (!UTC_based.endDate){
@@ -23,9 +22,9 @@ let parseTime = function (enteredTime,req, next, err) {
             req.startDate = localTZ_based_start;
             req.endDate = localTZ_based_end;
             req.full = UTC_based;
-            req.error = err;
             req.is_valid = true;
-            req.city = req.city;
+            req.city = city;
+            req.theme_value = theme_value;
             //console.log(UTC_based)
             next();
         } else {
@@ -34,9 +33,9 @@ let parseTime = function (enteredTime,req, next, err) {
             req.startDate = localTZ_based_start;
             req.endDate = localTZ_based_end;
             req.full = UTC_based;
-            req.error = err;
             req.is_valid = true;
-            req.city = req.city;
+            req.city = city;
+            req.theme_value = theme_value;
             // console.log(UTC_based)
             next();
         }

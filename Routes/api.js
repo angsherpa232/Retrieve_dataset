@@ -26,7 +26,7 @@ const { validateTime } = require('./timevalidate');
 const { geojsonPoly } = require('../Middleware/fetch_geojson');
 
 //THEME ENLISTED
-const theme = ['population', 'crime'];
+const theme = ['population', 'crime', 'migration','transport','economy','landuse','air quality'];
 
 //FOR FILE UPLOAD/DOWNLOAD
 const conn = mongoose.createConnection(config.DATABASE);
@@ -57,10 +57,12 @@ const storage = new GridFsStorage({
                     metadata: {
                         location: {
                             "coordinates":
-                                [7.64986213134766,
-                                    51.6843680652201]
+                                [
+                                    13.7493896484375,
+                                    51.08411588813325
+                                ]
                         },
-                        tags: 'population',
+                        tags: 'air quality',
                         DateTime: '2017-11-03' //day-month-year
                     }
                 };
@@ -122,7 +124,6 @@ router.get('/:theme', function (req, res, next) {
         })
     } else next('route')
 }, function (req, res, next) {
-    console.log('ho ta')
 });
 
 
@@ -158,9 +159,10 @@ router.get('/:cityName', geojsonPoly, (req, res, next) => {
                     'Length': file.length
                 });
             } else {
-                res.status(200).json({
-                    'Status': 'No data found.'
-                });
+                // res.status(200).json({
+                //     'Status': 'No data found.'
+                // });
+                next('route');
             }
         } else {
             res.status(200).send(file)
@@ -182,7 +184,9 @@ router.get('/:time', validateTime, function (req, res) {
             }
         })
     } else {
-        res.send('Please check for typos in the parameter.')
+        res.status(400).json({
+            'error':'Oops, typos in the parameter.'
+        })
     }
 });
 
@@ -191,31 +195,43 @@ router.get('/:time', validateTime, function (req, res) {
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
     console.log('ma pani')
     if (req.long && req.lat) {
-        console.log('pp')
     gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
         if (error) res.send(req.error);
         res.send(file)
     })
 }
     else if (req.data) {
-        console.log('opop')
         res.status(200).send(req.data)
     }
 
-    else if (req.startDate) {
-        console.log('from this filter')
-        gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
-            console.log('this is bad')
+    else if(req.startDate) {
+        if (req.theme_value) {
+        gfsModel.themeTime(req.startDate, req.theme_value, (err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {
-                res.status(200).send(file)
+                file.length === 0 ? res.status(200).send("0 file found.") : res.status(200).send(file)
+            }
+        })
+    } else if (req.city) {
+        gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
+            if (err) {
+                res.status(400).send(err)
+            } else {
+                file.length === 0 ? res.status(200).send("0 file found.") : res.status(200).send(file)
             }
         })
     } else {
         res.status(400).json({
+            'error':'Oops, typos in the parameter.'
+        })
+    }
+    }
+    else {
+        res.status(400).json({
             'length': req.length,
-            'error': req.error
+            'error': req.error,
+            'error': 'Oops, typos in the parameter.'
         })
     }
 })

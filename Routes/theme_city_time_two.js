@@ -5,7 +5,7 @@ const Sherlock = require('sherlockjs');
 const gfsModel = require('../Models/gfModel');
 
 //THEME ENLISTED
-const themed = ['population', 'crime'];
+const themed = ['population', 'crime', 'migration','transport','economy','landuse','air quality'];
 
 //MIDDLEWARE
 const {parseTime} = require('./timevalidate');
@@ -15,8 +15,8 @@ const {getgeoJson} = require('../Middleware/fetch_geojson');
 function if_theme_first(route,next) {
     console.log('from theme first')
     const UTC_based = Sherlock.parse(route[0])
-    if ((themed.includes(route.theme) && UTC_based.startDate != null)) return { time: route[0], theme_value: route.theme };
-    if ((themed.includes(route.theme) && UTC_based.startDate === null)) return { cityName: route[0], theme_value: route.theme };
+    if ((themed.includes((route.theme).toLowerCase()) && UTC_based.startDate != null)) return { time: route[0], theme_value: route.theme };
+    if ((themed.includes((route.theme).toLowerCase()) && UTC_based.startDate === null)) return { cityName: route[0], theme_value: route.theme };
     return 'Check for typos in the parameters'
 }
 
@@ -24,8 +24,8 @@ function if_theme_first(route,next) {
 function if_theme_second(route) {
     console.log('from theme second')
     const UTC_based = Sherlock.parse(route.theme)
-    if ((themed.includes(route[0]) && UTC_based.startDate != null)) return { time: route.theme, theme_value: route[0] };
-    if ((themed.includes(route[0]) && UTC_based.startDate === null)) return { cityName: route.theme, theme_value: route[0] };
+    if ((themed.includes(route[0].toLowerCase()) && UTC_based.startDate != null)) return { time: route.theme, theme_value: route[0] };
+    if ((themed.includes(route[0].toLowerCase()) && UTC_based.startDate === null)) return { cityName: route.theme, theme_value: route[0] };
     return 'Check for typos in the parameters';
 }
 
@@ -51,42 +51,50 @@ async function file_within_city(cityName, theme_value, req, next) {
     console.log('inside city')
     const fetchedCity = await getgeoJson(cityName, req, next);
     if (fetchedCity.data.length === 0) {
-        req.error = 'Enter proper city Name.'
+        req.error = 'Oops, typos in the parameter.'
         next();
     } else {
-    const city = (fetchedCity.data)[1].geojson.coordinates;
-    gfsModel.themeCity(city, theme_value, (err, file) => {
-        if (!file || file.length === 0) {
-            if (Array.isArray(file)) {
-                req.length = file.length;
-                req.error = err;
-                next();
-            } else {
-                req.length = '0'
-                req.error = err;
-                next();
-            }
-        } else {
-        req.data = file;
-        next()
+        try {
+            const city = (fetchedCity.data)[1].geojson.coordinates;
+            gfsModel.themeCity(city, theme_value, (err, file) => {
+                if (!file || file.length === 0) {
+                    if (Array.isArray(file)) {
+                        req.length = file.length;
+                        req.error = err;
+                        next();
+                    } else {
+                        req.length = '0'
+                        req.error = err;
+                        next();
+                    }
+                } else {
+                    req.data = file;
+                    next()
+                }
+            });
+        } catch (e) {
+            req.length = '0'
+            req.error = 'No file found in given city.'
+            req.error = e;
+            next();
         }
-    });
-}
+    }
 }
 
 
 //@desc Loads all the files for chosen theme within the city
-async function getGeoJson(cityName, time, req, next) {
+async function getGeoJson(cityName, time, req, next, theme_value) {
     console.log('inside city time scope')
     const fetchedCity = await getgeoJson(cityName, req, next);
     if (fetchedCity.data.length === 0) {
-        req.error = 'Enter proper city Name.'
+        req.error = 'Oops, typos in the parameter.'
         next();
     } else {
         try {
             const city = (fetchedCity.data)[1].geojson.coordinates;
             req.city = city;
-            parseTime(time, req, next, req.city);
+            req.theme_value = theme_value;
+            parseTime(time, req, next, req.city, req.theme_value);
         } catch (e) {
             console.log('from two')
             req.length = '0'
@@ -105,7 +113,7 @@ let theme_city = function (req, res, next) {
     }
     else {
     let cityName, theme_value, time;
-    if (themed.includes(req.params.theme)) {
+    if (themed.includes((req.params.theme).toLowerCase())) {
         //Check if the radius is given or not. If true then nearby algorithm will be executed, if not else statement will be executed
         if (/[=]/g.test(req.params[0])) {
             console.log('aayo gorkhali')
@@ -132,17 +140,16 @@ let theme_city = function (req, res, next) {
         ({cityName,theme_value,...time} = if_theme_first(req.params))
         //Next time begin from this fn validateTime(time.time,next). Seems like validateTime has to be converted into 
         //independent function inside timevalidate.js file :D
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
         }
-    } else if (themed.includes(req.params[0])) {
+    } else if (themed.includes(((req.params[0]).toLowerCase()))) {
         let {cityName,theme_value, ...time} = if_theme_second(req.params)
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
     } else {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
-        console.log('this items are ',cityName, time.time, theme_value)
         //parseTime(time.time, cityName,req, next);
-        getGeoJson(cityName,time.time,req,next)
+        getGeoJson(cityName,time.time,req,next,theme_value)
     }
 }
 }
