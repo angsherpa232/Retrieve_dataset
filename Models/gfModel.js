@@ -26,21 +26,34 @@ schemaGrid.statics.themeCity =  function(coordinate,theme, cb){
 
 //@route GET /
 //@desc Load the data based on TIME
-schemaGrid.statics.filterTime = function(startTime, cb) {
-    this.find().where('metadata.DateTime').equals(startTime).exec(cb);
+schemaGrid.statics.filterTime = function(startTime, endTime,cb) {
+    if (!endTime) {
+        this.find().where('metadata.DateTime').equals(startTime).exec(cb);
+} else if(endTime){
+    this.find().where('metadata.DateTime').gt(startTime).lt(endTime).exec(cb);
+}
 };
 
 //@route GET /
 //@desc Load the data based on TIME and THEME
-schemaGrid.statics.themeTime = function(startTime, theme, cb) {
-    this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).exec(cb);
+schemaGrid.statics.themeTime = function(startTime,endTime,theme, cb) {
+    if (!endTime) {
+        this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).exec(cb);
+} else if(endTime){
+    this.find().where('metadata.DateTime').gt(startTime).lt(endTime).where('metadata.tags').equals(theme).exec(cb);
+}
 };
 
 //@route GET /
 //@desc Load the data based on TIME
-schemaGrid.statics.timeSpace = function(startTime, coordinate, cb) {
-    this.find().where('metadata.DateTime').equals(startTime).where('metadata.location.coordinates').within().geometry({ type: 'Polygon', coordinates: coordinate })
+schemaGrid.statics.timeSpace = function(startTime, endTime, coordinate, cb) {
+    if (!endTime) {
+        this.find().where('metadata.DateTime').equals(startTime).where('metadata.location.coordinates').within().geometry({ type: 'Polygon', coordinates: coordinate })
+        .exec(cb);
+} else if(endTime){
+    this.find().where('metadata.DateTime').gt(startTime).lt(endTime).where('metadata.location.coordinates').within().geometry({ type: 'Polygon', coordinates: coordinate })
     .exec(cb);
+}
 };
 
 //@route GET /
@@ -57,9 +70,14 @@ schemaGrid.statics.within_radius_theme = function(theme,lng,lat,distance,cb) {
 
 //@route GET /
 //@desc Load the data based on all three params (TIME, THEME and SPACE)
-schemaGrid.statics.filterTimeThemeSpace = function(startTime, theme, coordinate, cb) {
-    this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).where('metadata.location.coordinates').within().geometry({type:'Polygon',coordinates: coordinate })
-   .exec(cb)
+schemaGrid.statics.filterTimeThemeSpace = function(startTime, endTime,theme, coordinate, cb) {
+    if (!endTime) {
+        this.find().where('metadata.DateTime').equals(startTime).where('metadata.tags').equals(theme).where('metadata.location.coordinates').within().geometry({type:'Polygon',coordinates: coordinate })
+        .exec(cb)
+} else if(endTime){
+    this.find().where('metadata.DateTime').gt(startTime).lt(endTime).where('metadata.tags').equals(theme).where('metadata.location.coordinates').within().geometry({type:'Polygon',coordinates: coordinate })
+    .exec(cb)
+}
 }
 
 

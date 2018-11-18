@@ -48,7 +48,6 @@ function optimizer(req, next) {
 
 //@desc Loads all the files for chosen theme within the city
 async function file_within_city(cityName, theme_value, req, next) {
-    console.log('inside city')
     const fetchedCity = await getgeoJson(cityName, req, next);
     if (fetchedCity.data.length === 0) {
         req.error = 'Oops, typos in the parameter.'
@@ -84,7 +83,6 @@ async function file_within_city(cityName, theme_value, req, next) {
 
 //@desc Loads all the files for chosen theme within the city
 async function getGeoJson(cityName, time, req, next, theme_value) {
-    console.log('inside city time scope')
     const fetchedCity = await getgeoJson(cityName, req, next);
     if (fetchedCity.data.length === 0) {
         req.error = 'Oops, typos in the parameter.'
@@ -92,11 +90,8 @@ async function getGeoJson(cityName, time, req, next, theme_value) {
     } else {
         try {
             const city = (fetchedCity.data)[1].geojson.coordinates;
-            req.city = city;
-            req.theme_value = theme_value;
-            parseTime(time, req, next, req.city, req.theme_value);
+            parseTime(time, req, next,city);
         } catch (e) {
-            console.log('from two')
             req.length = '0'
             req.error = 'No file found in given city.'
             req.error = e;
@@ -116,7 +111,6 @@ let theme_city = function (req, res, next) {
     if (themed.includes((req.params.theme).toLowerCase())) {
         //Check if the radius is given or not. If true then nearby algorithm will be executed, if not else statement will be executed
         if (/[=]/g.test(req.params[0])) {
-            console.log('aayo gorkhali')
             let radius_and_coord = req.params[0].split("&");
             let radius_text = radius_and_coord[0].match(/[a-zA-Z]/gi).join("")
             //Get the first element and search for numbers only (accepts decimal value as well)
@@ -140,16 +134,16 @@ let theme_city = function (req, res, next) {
         ({cityName,theme_value,...time} = if_theme_first(req.params))
         //Next time begin from this fn validateTime(time.time,next). Seems like validateTime has to be converted into 
         //independent function inside timevalidate.js file :D
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,cityName,theme_value)
         }
     } else if (themed.includes(((req.params[0]).toLowerCase()))) {
         let {cityName,theme_value, ...time} = if_theme_second(req.params)
-        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,theme_value)
+        cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next,cityName,theme_value)
     } else {
         //run the code that checks between time and space
         let {cityName,theme_value, ...time} = if_theme_not_entered(req.params)
         //parseTime(time.time, cityName,req, next);
-        getGeoJson(cityName,time.time,req,next,theme_value)
+        getGeoJson(cityName,time.time,req,next)
     }
 }
 }

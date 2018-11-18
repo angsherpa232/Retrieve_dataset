@@ -176,7 +176,7 @@ router.get('/:cityName', geojsonPoly, (req, res, next) => {
 router.get('/:time', validateTime, function (req, res) {
     console.log('inside time')
     if (req.is_valid) {
-        gfsModel.filterTime(req.startDate, (err, file) => {
+        gfsModel.filterTime(req.startDate, req.endDate,(err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {
@@ -193,7 +193,7 @@ router.get('/:time', validateTime, function (req, res) {
 //@route GET 
 //@desc Get two by two combination of TIME, THEME AND SPACE.
 router.get('/:theme/*', theme_city_time_two, (req, res) => {
-    console.log('ma pani')
+    console.log('inside two param route')
     if (req.long && req.lat) {
     gfsModel.within_radius_theme(req.theme,req.long, req.lat, req.distance, (error, file) => {
         if (error) res.send(req.error);
@@ -206,7 +206,7 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
 
     else if(req.startDate) {
         if (req.theme_value) {
-        gfsModel.themeTime(req.startDate, req.theme_value, (err, file) => {
+        gfsModel.themeTime(req.startDate, req.endDate,req.theme_value, (err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {
@@ -214,7 +214,7 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
             }
         })
     } else if (req.city) {
-        gfsModel.timeSpace(req.startDate, req.city,(err, file) => {
+        gfsModel.timeSpace(req.startDate, req.endDate, req.city,(err, file) => {
             if (err) {
                 res.status(400).send(err)
             } else {
@@ -239,8 +239,8 @@ router.get('/:theme/*', theme_city_time_two, (req, res) => {
 // //@route GET 
 // //@desc Get three by three combination of TIME, THEME AND SPACE.
 router.get('/:time/*/*', theme_city_time_three, (req, res) => {
-    console.log('from three param route')
-    gfsModel.filterTimeThemeSpace(req.startDate, req.theme_value, req.city, (err, file) => {
+    console.log('from three param route')    
+    gfsModel.filterTimeThemeSpace(req.startDate, req.endDate,req.theme_value, req.city, (err, file) => {
 
         if (!file || file.length === 0) {
             if (Array.isArray(file)) {
