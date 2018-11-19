@@ -26,7 +26,7 @@ const { validateTime } = require('./timevalidate');
 const { geojsonPoly } = require('../Middleware/fetch_geojson');
 
 //THEME ENLISTED
-const theme = ['population', 'crime', 'migration','transport','economy','landuse','air quality'];
+const theme = ['population', 'crime', 'migration','transport','economy','landuse','weather'];
 
 //FOR FILE UPLOAD/DOWNLOAD
 const conn = mongoose.createConnection(config.DATABASE);
