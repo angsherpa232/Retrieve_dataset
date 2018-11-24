@@ -42,6 +42,11 @@ html body {
     overflow-y: auto;
 }
 
+.leaflet-container{
+    height: 80vh;
+   width: 100%;
+}
+
 .user_input {
     color #fff;
     background: green;

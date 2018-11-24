@@ -8,6 +8,7 @@ import MapComp from './components/mapComp';
 import Footer from './components/footer';
 import Theme_Time from './components/theme_time';
 
+
 class App extends Component {  
     state= {
       response: [],
@@ -16,14 +17,24 @@ class App extends Component {
     }
 
   
-  // componentDidMount() {
+  //  componentDidMount() {
   //   axios.get('/munster')
   //   .then(response => {
   //     //this.setState({response: response})
   //     console.log(response)
   //   })
   //   .catch(err => console.log(err))
-  // }
+  // let map = L.map('map', {
+  //   center: [49.8419, 24.0315],
+  //   zoom: 16,
+  //   layers: [
+  //     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  //       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+  //     }),
+  //   ]
+  // });
+  // return ('hello')
+  //  }
 
 handleChangeMain= (e) => {
   this.setState({post: e.target.value})
@@ -51,6 +62,7 @@ submitted (e) {
       onSubmit = {this.submitted.bind(this)}
       />
       <MapComp />
+
       <Theme_Time />
       </div>
       <Footer />
