@@ -2,7 +2,9 @@ import React from 'react';
 
 const UserInput = (props) => {
     return (
+        <div>
         <div className="user_input">
+        <p>Enter your query here</p>
         <form onSubmit={props.onSubmit}> 
             <input 
             type="text"
@@ -11,6 +13,7 @@ const UserInput = (props) => {
             />
             <button type="submit">Submit</button>
         </form>
+        </div>
         </div>
     )
 }

@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import './App.css';
-import UserInput from './components/user_input';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    
-    this.state= {
+//COMPONENTS
+import UserInput from './components/user_input';
+import Header from './components/header';
+import MapComp from './components/mapComp';
+import Footer from './components/footer';
+import Theme_Time from './components/theme_time';
+
+class App extends Component {  
+    state= {
       response: [],
       post: '/home/sweet',
       responseToPost: ''
     }
 
-  }
   
   // componentDidMount() {
   //   axios.get('/munster')
@@ -42,13 +43,17 @@ submitted (e) {
 
   render() {
     return (
-      <div className="App">
-      <p>{this.state.post}</p>
-      This is nasty {this.state.post}
+      <div>
+      <Header/>
+      <div className="row">
       <UserInput postvalue = {this.state.post} 
       handleChange={this.handleChangeMain}
       onSubmit = {this.submitted.bind(this)}
       />
+      <MapComp />
+      <Theme_Time />
+      </div>
+      <Footer />
       </div>
     );
   }
