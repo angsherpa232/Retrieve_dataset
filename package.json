@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node server.js",
-    "start": "nodemon server.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+  },
+  "engines": {
+    "node": "10.10.0"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +20,7 @@
     "DateValidator": "^1.0.5",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
+    "concurrently": "^4.1.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "gridfs-stream": "^1.1.1",

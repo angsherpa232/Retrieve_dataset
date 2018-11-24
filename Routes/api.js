@@ -108,6 +108,11 @@ router.get('/', (req, res) => {
 //     })
 // });
 
+router.get('/home/sweet', (req,res) => {
+    console.log('HOME SAFE')
+    res.send('safely home')
+})
+
 
 //@route GET /
 //@desc Loads particular theme data 
