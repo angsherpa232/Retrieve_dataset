@@ -1,21 +1,29 @@
 import React from 'react';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 
-const MapComp = () => {
-    const position = [51.505, -0.09]
+const MapComp = (props) => {
+  
     return (
         <div className="mapComp">
         <p>This is Map section.</p>
-        <Map center={position} zoom={13} maxZoom={18}>
+        <Map center={[51.96849038866873,7.614555358886718]} zoom={10} maxZoom={18}>
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={position}>
+      
+      {props.coord.map(item=>{
+    let lng = `${item.metadata.location.coordinates[0]}`;
+    let lat = `${item.metadata.location.coordinates[1]}`;
+    let position = [lat, lng];
+    return (
+    <Marker key={`${item._id}`} position={position}>
           <Popup>
             A pretty CSS3 popup. <br /> Easily customizable.
           </Popup>
         </Marker>
+      )})
+}
         </Map>
       </div>
     )

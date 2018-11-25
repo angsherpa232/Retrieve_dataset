@@ -72,7 +72,7 @@ submitted (e) {
       dataLength = {this.state.dataLength}
       loading = {this.state.loading}
       />
-      <MapComp />
+      <MapComp coord={this.state.response}/>
       <ThemeTime post={this.state.response}/>
       </div>
       <Footer />
