@@ -7,7 +7,7 @@ const UserInputStats = (props) => {
         <br/>
         {`Total Data: ${props.dataLength}`}
         <br/>
-        {props.loading ? <img src="https://thumbs.gfycat.com/HonoredExemplaryAmphibian-size_restricted.gif" />: null}
+        {props.loading ? <img src="https://thumbs.gfycat.com/HonoredExemplaryAmphibian-size_restricted.gif" alt="img not found"/>: null}
         </div>
     )
 }

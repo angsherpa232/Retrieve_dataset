@@ -15,7 +15,10 @@ class App extends Component {
       post: '/bonn',
       status: '',
       dataLength: '',
-      loading: false
+      loading: false,
+      lat: 42.364166,
+      lng: 43.745002,
+      zoom: 3
     }
 
   
@@ -25,14 +28,25 @@ class App extends Component {
       this.setState({response: result.data})
       this.setState({dataLength: result.data.length})
       this.setState({status: result.statusText});
-      console.log(result)
     })
     .catch(err => console.log(err))
    }
 
 handleChangeMain= (e) => {
   this.setState({post: e.target.value})
-  //console.log(e.target.value)
+}
+
+changeState(res){
+  const resultLen = res.data.length;
+  this.setState({response: res.data});
+  this.setState({status: res.statusText});
+  this.setState({lng: res.data[0].metadata.location.coordinates[0]});
+  this.setState({lat: res.data[0].metadata.location.coordinates[1]});
+  this.setState({zoom:12})
+  this.setState({loading: false});
+      resultLen > 0 ?
+      this.setState({dataLength: resultLen})
+      : this.setState({dataLength: 0})
 }
 
 submitted (e) {
@@ -40,15 +54,7 @@ submitted (e) {
   this.setState({loading: true});
   axios.get(this.state.post)
     .then(result => {
-      const resultLen = result.data.length;
-      this.setState({response: result.data});
-      this.setState({status: result.statusText});
-      this.setState({loading: false});
-      resultLen > 0 ?
-      this.setState({dataLength: resultLen})
-      : this.setState({dataLength: 0})
-      
-      console.log(result)
+      this.changeState(result);
     })
     .catch(err => {
       this.setState({loading: false});
@@ -72,7 +78,7 @@ submitted (e) {
       dataLength = {this.state.dataLength}
       loading = {this.state.loading}
       />
-      <MapComp coord={this.state.response}/>
+      <MapComp {...this.state}/>
       <ThemeTime post={this.state.response}/>
       </div>
       <Footer />
