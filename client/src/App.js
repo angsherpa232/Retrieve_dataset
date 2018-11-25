@@ -13,18 +13,22 @@ class App extends Component {
     state= {
       response: [],
       post: '/bonn',
-      responseToPost: ''
+      status: '',
+      dataLength: '',
+      loading: false
     }
 
   
-  //  componentDidMount() {
-  //   axios.get('/population')
-  //   .then(response => {
-  //     this.setState({response: response.data})
-  //     console.log(response)
-  //   })
-  //   .catch(err => console.log(err))
-  //  }
+   componentDidMount() {
+    axios.get('/all')
+    .then(result => {
+      this.setState({response: result.data})
+      this.setState({dataLength: result.data.length})
+      this.setState({status: result.statusText});
+      console.log(result)
+    })
+    .catch(err => console.log(err))
+   }
 
 handleChangeMain= (e) => {
   this.setState({post: e.target.value})
@@ -33,13 +37,26 @@ handleChangeMain= (e) => {
 
 submitted (e) {
   e.preventDefault();
+  this.setState({loading: true});
   axios.get(this.state.post)
     .then(result => {
-      this.setState({response: result.data})
-      console.log('Submitted successfully!!')
-      console.log(this.state.response)
+      const resultLen = result.data.length;
+      this.setState({response: result.data});
+      this.setState({status: result.statusText});
+      this.setState({loading: false});
+      resultLen > 0 ?
+      this.setState({dataLength: resultLen})
+      : this.setState({dataLength: 0})
+      
+      console.log(result)
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      this.setState({loading: false});
+      this.setState({status: err});
+      this.setState({dataLength: 0});
+      this.setState({response: []});
+    }
+      );
 }
 
 
@@ -51,6 +68,9 @@ submitted (e) {
       <UserInput postvalue = {this.state.post} 
       handleChange={this.handleChangeMain}
       onSubmit = {this.submitted.bind(this)}
+      status = {this.state.status}
+      dataLength = {this.state.dataLength}
+      loading = {this.state.loading}
       />
       <MapComp />
       <ThemeTime post={this.state.response}/>

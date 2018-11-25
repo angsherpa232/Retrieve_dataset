@@ -79,8 +79,22 @@ html body {
     }
 }
   
+table {
+    width: 100%;
+    border-spacing: 5px;
+}
   
-  
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 10px;
+}
+
+
+img {
+    height: 90px;
+    width: 100px;
+}
   
   
   

@@ -1,8 +1,8 @@
 import React from 'react';
+import UserInputStats from './userInputExtended';
 
 const UserInput = (props) => {
     return (
-        <div>
         <div className="user_input">
         <p>Enter your query here</p>
         <form onSubmit={props.onSubmit}> 
@@ -13,7 +13,8 @@ const UserInput = (props) => {
             />
             <button type="submit">Submit</button>
         </form>
-        </div>
+        <br/>
+        <UserInputStats {...props}/>
         </div>
     )
 }
