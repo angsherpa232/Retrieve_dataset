@@ -6,34 +6,24 @@ import UserInput from './components/user_input';
 import Header from './components/header';
 import MapComp from './components/mapComp';
 import Footer from './components/footer';
-import Theme_Time from './components/theme_time';
+import ThemeTime from './components/theme_time';
 
 
 class App extends Component {  
     state= {
       response: [],
-      post: '/home/sweet',
+      post: '/bonn',
       responseToPost: ''
     }
 
   
   //  componentDidMount() {
-  //   axios.get('/munster')
+  //   axios.get('/population')
   //   .then(response => {
-  //     //this.setState({response: response})
+  //     this.setState({response: response.data})
   //     console.log(response)
   //   })
   //   .catch(err => console.log(err))
-  // let map = L.map('map', {
-  //   center: [49.8419, 24.0315],
-  //   zoom: 16,
-  //   layers: [
-  //     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-  //       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-  //     }),
-  //   ]
-  // });
-  // return ('hello')
   //  }
 
 handleChangeMain= (e) => {
@@ -46,7 +36,8 @@ submitted (e) {
   axios.get(this.state.post)
     .then(result => {
       this.setState({response: result.data})
-      console.log('THis is ', result)
+      console.log('Submitted successfully!!')
+      console.log(this.state.response)
     })
     .catch(err => console.log(err))
 }
@@ -62,8 +53,7 @@ submitted (e) {
       onSubmit = {this.submitted.bind(this)}
       />
       <MapComp />
-
-      <Theme_Time />
+      <ThemeTime post={this.state.response}/>
       </div>
       <Footer />
       </div>

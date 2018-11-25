@@ -1,17 +1,19 @@
 import React from 'react';
 
-const Theme_Time = () => {
+const Theme_Time = (props) => {
+    const p = ['ang','dawa','sherpa']
     return (
-        <div className="theme_time">
-        <ul>
-            <li>Theme and Time</li>
-            <li>Theme and Time</li>
-            <li>Theme and Time</li>
-            <li>Theme and Time</li>
-           
-            </ul>
+            <div className="theme_time">
+            {Array.isArray(props.post)?
+            props.post.map((item) => (
+                <dl key={item._id}>
+                <dt>{item.metadata.tags}</dt>
+                <dd>{item.metadata.DateTime}</dd>
+                </dl>
+            ))
+            :console.log('nein')}
         </div>
-    )
+        ) 
 }
 
 export default Theme_Time;

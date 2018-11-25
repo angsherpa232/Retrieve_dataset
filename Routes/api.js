@@ -113,6 +113,15 @@ router.get('/home/sweet', (req,res) => {
     res.send('safely home')
 })
 
+//@route GET /
+//@desc Loads all files 
+router.get('/all', (req,res) => {
+    gfsModel.allFiles((err, file) => {
+        if (err) res.status(400).send(err)
+        res.status(200).send(file)
+    })
+})
+
 
 //@route GET /
 //@desc Loads particular theme data 

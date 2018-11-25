@@ -4,8 +4,9 @@ import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 const MapComp = () => {
     const position = [51.505, -0.09]
     return (
-        <div className="mapComp">This is Map 
-        <Map center={position} zoom={13}>
+        <div className="mapComp">
+        <p>This is Map section.</p>
+        <Map center={position} zoom={13} maxZoom={18}>
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
