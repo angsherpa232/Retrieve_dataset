@@ -49,15 +49,42 @@ html body {
 
 .user_input {
     color #fff;
-    background: #347134;
-    color: #fff;
+    background-color: #319e45;
     -webkit-flex: 1;
     -ms-flex: 1;
     padding: 40px;
-    height: 80vh;
-    overflow-y: auto;
     text-align: center;
   }
+
+.formInsert {
+    border-radius: 5px;
+    padding: 0 36px;
+}
+
+input[type=submit] {
+    width: 60%;
+    padding: 6px 6px;
+    margin: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: large;
+    font-weight: 500;
+    background-color: inherit;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+input[type=text] {
+    width: 100%;
+    padding: 8px 8px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: unset;
+}
 
 .theme_time {
     padding: 10px;
@@ -97,8 +124,4 @@ img {
     width: 100px;
 }
 
-  
-  
-  
-  
   

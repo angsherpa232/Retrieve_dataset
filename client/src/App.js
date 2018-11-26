@@ -12,7 +12,7 @@ import ThemeTime from './components/theme_time';
 class App extends Component {  
     state= {
       response: [],
-      post: '/bonn',
+      userValue: '/bonn',
       status: '',
       dataLength: '',
       loading: false,
@@ -25,25 +25,28 @@ class App extends Component {
    componentDidMount() {
     axios.get('/all')
     .then(result => {
-      this.setState({response: result.data})
-      this.setState({dataLength: result.data.length})
-      this.setState({status: result.statusText});
+      this.setState({
+        response: result.data,
+        dataLength: result.data.length,
+        status: result.statusText
+      })
     })
     .catch(err => console.log(err))
    }
 
 handleChangeMain= (e) => {
-  this.setState({post: e.target.value})
+  this.setState({userValue: e.target.value})
 }
 
 changeState(res){
   const resultLen = res.data.length;
-  
-  this.setState({status: res.statusText});
-  this.setState({lng: res.data[0].metadata.location.coordinates[0]});
-  this.setState({lat: res.data[0].metadata.location.coordinates[1]});
-  this.setState({zoom:12})
-  this.setState({loading: false});
+  this.setState({
+    status: res.statusText,
+    lng: res.data[0].metadata.location.coordinates[0],
+    lat: res.data[0].metadata.location.coordinates[1],
+    zoom:12,
+    loading: false
+  });
       resultLen > 0 ?
       this.setState({response: res.data,dataLength: resultLen})
       : this.setState({dataLength: 0})
@@ -52,15 +55,17 @@ changeState(res){
 submitted (e) {
   e.preventDefault();
   this.setState({loading: true});
-  axios.get(this.state.post)
+  axios.get(this.state.userValue)
     .then(result => {
       this.changeState(result);
     })
     .catch(err => {
-      this.setState({loading: false});
-      this.setState({status: err});
-      this.setState({dataLength: 0});
-      this.setState({response: []});
+      this.setState({
+        loading: false,
+        status: err,
+        dataLength: 0,
+        response: []
+      });
     }
       );
 }
@@ -71,7 +76,7 @@ submitted (e) {
       <div>
       <Header/>
       <div className="row">
-      <UserInput postvalue = {this.state.post} 
+      <UserInput postvalue = {this.state.userValue} 
       handleChange={this.handleChangeMain}
       onSubmit = {this.submitted.bind(this)}
       status = {this.state.status}
