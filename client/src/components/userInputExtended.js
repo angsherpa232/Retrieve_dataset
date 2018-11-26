@@ -3,9 +3,11 @@ import React from 'react';
 const UserInputStats = (props) => {
     return (
         <div>
-        {`Status: ${props.status}`}
+        {`Status: `}
         <br/>
-        {`Total Data: ${props.dataLength}`}
+        {`${props.status}`}
+        <br/> <br/>
+        {`Total data found: ${props.dataLength}`}
         <br/>
         {props.loading ? <img src="https://thumbs.gfycat.com/HonoredExemplaryAmphibian-size_restricted.gif" alt="img not found"/>: null}
         </div>

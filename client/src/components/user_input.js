@@ -8,7 +8,7 @@ const UserInput = (props) => {
             <label>
                 Enter your query here:
             <input type="text"
-            placeholder="aa"
+            placeholder="api/bonn"
             value={props.postvalue}
             onChange={props.handleChange} 
             />

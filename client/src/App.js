@@ -12,7 +12,7 @@ import ThemeTime from './components/theme_time';
 class App extends Component {  
     state= {
       response: [],
-      userValue: '/bonn',
+      userValue: '',
       status: '',
       dataLength: '',
       loading: false,

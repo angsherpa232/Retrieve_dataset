@@ -73,17 +73,24 @@ input[type=submit] {
 }
 
 input[type=submit]:hover {
-    background-color: #45a049;
+    background-color: #22bf2f;
 }
 
 input[type=text] {
-    width: 100%;
+    width: 200px;
     padding: 8px 8px;
     margin: 8px 0;
-    border: 1px solid #ccc;
+    border: 1px solid rgb(42, 209, 117);
     border-radius: 4px;
     font-weight: 400;
     font-size: unset;
+    background-color: silver;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input[type="text"]:focus {
+    width: 110%;
 }
 
 .theme_time {
