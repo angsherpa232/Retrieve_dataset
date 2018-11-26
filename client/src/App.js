@@ -38,14 +38,14 @@ handleChangeMain= (e) => {
 
 changeState(res){
   const resultLen = res.data.length;
-  this.setState({response: res.data});
+  
   this.setState({status: res.statusText});
   this.setState({lng: res.data[0].metadata.location.coordinates[0]});
   this.setState({lat: res.data[0].metadata.location.coordinates[1]});
   this.setState({zoom:12})
   this.setState({loading: false});
       resultLen > 0 ?
-      this.setState({dataLength: resultLen})
+      this.setState({response: res.data,dataLength: resultLen})
       : this.setState({dataLength: 0})
 }
 

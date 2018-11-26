@@ -43,7 +43,7 @@ html body {
 }
 
 .leaflet-container{
-    height: 75vh;
+    height: 100%;
    width: 100%;
 }
 
@@ -96,6 +96,7 @@ img {
     height: 90px;
     width: 100px;
 }
+
   
   
   

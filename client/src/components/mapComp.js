@@ -4,7 +4,6 @@ import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 const MapComp = (props) => {
     return (
         <div className="mapComp">
-        <p>This is Map section.</p>
         <Map center={[props.lat,props.lng]} zoom={props.zoom} maxZoom={18} useFlyTo={true}>
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
