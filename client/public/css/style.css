@@ -56,10 +56,6 @@ html body {
     text-align: center;
   }
 
-.formInsert {
-    border-radius: 5px;
-    padding: 0 36px;
-}
 
 input[type=submit] {
     width: 60%;
@@ -127,8 +123,8 @@ td, th {
 
 
 img {
-    height: 90px;
-    width: 100px;
+    height: 110px;
+    width: 120px;
 }
 
   

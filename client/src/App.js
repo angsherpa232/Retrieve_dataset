@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import L from 'leaflet';
 
 //COMPONENTS
 import UserInput from './components/user_input';
@@ -7,7 +8,7 @@ import Header from './components/header';
 import MapComp from './components/mapComp';
 import Footer from './components/footer';
 import ThemeTime from './components/theme_time';
-
+import './moveFunction';
 
 class App extends Component {  
     state= {
@@ -18,7 +19,8 @@ class App extends Component {
       loading: false,
       lat: 42.364166,
       lng: 43.745002,
-      zoom: 3
+      zoom: 3,
+      bounds: null
     }
 
   
@@ -38,18 +40,43 @@ handleChangeMain= (e) => {
   this.setState({userValue: e.target.value})
 }
 
-changeState(res){
+
+getBoundings= (res,resultLen) => {
+  let corde = []
+
+//Try this logic to swtich the lat long position for bounding 
+this.state.response.map(e => {
+  corde.push(e.metadata.location.coordinates)
+})
+  corde.map(elem => {
+    elem.move(0,1)
+  })
+
+  corde.length > 0 ?
+  this.setState({
+    dataLength: resultLen,
+    bounds: L.latLngBounds(corde)
+  }) : console.log('nein')
+}
+
+checkLength = (res) => {
   const resultLen = res.data.length;
+  resultLen > 0 ?
+      this.getBoundings(res,resultLen)
+      : this.setState({dataLength: 0})
+}
+
+changeState = (res) => {
+  console.log('from button push')
   this.setState({
     status: res.statusText,
+    response: res.data,
     lng: res.data[0].metadata.location.coordinates[0],
     lat: res.data[0].metadata.location.coordinates[1],
-    zoom:12,
+    zoom: 12,
     loading: false
   });
-      resultLen > 0 ?
-      this.setState({response: res.data,dataLength: resultLen})
-      : this.setState({dataLength: 0})
+  this.checkLength(res);
 }
 
 submitted (e) {
@@ -69,7 +96,6 @@ submitted (e) {
     }
       );
 }
-
 
   render() {
     return (
