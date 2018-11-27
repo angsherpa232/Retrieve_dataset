@@ -1,16 +1,24 @@
 import React from 'react';
+import UserInputStats from './userInputExtended';
 
 const UserInput = (props) => {
     return (
         <div className="user_input">
         <form onSubmit={props.onSubmit}> 
-            <input 
-            type="text"
+            <label>
+                Enter your query here:
+            <input type="text"
+            placeholder="api/bonn"
             value={props.postvalue}
-            onChange={props.handleChange}
+            onChange={props.handleChange} 
             />
-            <button type="submit">Submit</button>
+            </label> 
+            <label>
+                <input type="submit" value="Submit"/>
+            </label>
         </form>
+        <br/>
+        <UserInputStats {...props}/>
         </div>
     )
 }

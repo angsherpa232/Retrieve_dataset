@@ -11,6 +11,13 @@ schemaGrid.statics.inside = function(coordinate, cb){
     }
 
 //@route GET /
+//@desc Load all the files
+schemaGrid.statics.allFiles = function(callback) {
+    this.find().exec(callback);
+}
+
+
+//@route GET /
 //@desc Load the specific THEME data
 schemaGrid.statics.onlytheme = function(theme, callback) {
     this.find().where('metadata.tags').equals(theme)
