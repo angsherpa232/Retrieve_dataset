@@ -38,7 +38,8 @@ class App extends Component {
         coords: obj.latlongArray,
         response: obj.result.data,
         dataLength: obj.result.data.length,
-        status: obj.result.statusText
+        status: obj.result.statusText,
+        bounds: L.latLngBounds(obj.latlongArray)
       })
     }
 
@@ -61,28 +62,10 @@ handleChangeMain= (e) => {
   this.setState({userValue: e.target.value})
 }
 
-
-getBoundings= (res,resultLen) => {
-  let corde = []
-
-this.state.response.map(e => {
-  corde.push(e.metadata.location.coordinates)
-})
-  corde.map(elem => {
-    elem.move(1,0)
-  })
-
-  corde.length > 0 ?
-  this.setState({
-    dataLength: resultLen,
-    bounds: L.latLngBounds(corde)
-  }) : console.log('nein')
-}
-
 checkLength = (res) => {
   const resultLen = res.data.length;
   resultLen > 0 ?
-      this.getBoundings(res,resultLen)
+      this.changeLatLong(this.pushLatLong(res))
       : this.setState({dataLength: 0})
 }
 
