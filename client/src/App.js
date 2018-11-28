@@ -13,6 +13,7 @@ import './moveFunction';
 class App extends Component {  
     state= {
       response: [],
+      coords: [],
       userValue: '',
       status: '',
       dataLength: '',
@@ -23,46 +24,48 @@ class App extends Component {
       bounds: null
     }
 
-  
+    pushLatLong = (res) => {
+      let holder = [];
+      res.data.map(elem => {
+        holder.push(elem.metadata.location.coordinates);
+      })
+      return {latlongArray:holder, result: res};
+    }
+
+    changeLatLong = (obj) => {
+      obj.latlongArray.map(elem => elem.move(1,0))
+      this.setState({
+        coords: obj.latlongArray,
+        response: obj.result.data,
+        dataLength: obj.result.data.length,
+        status: obj.result.statusText,
+        bounds: L.latLngBounds(obj.latlongArray)
+      })
+    }
+
+
    componentDidMount() {
+     let latlongCollecter = []
     axios.get('/all')
     .then(result => {
-      this.setState({
-        response: result.data,
-        dataLength: result.data.length,
-        status: result.statusText
-      })
+      
+      this.changeLatLong(this.pushLatLong(result))
+      latlongCollecter.push(result.data[0].metadata.location.coordinates)
+      latlongCollecter.map(e=>e.move(1,0))
+      console.log('new trial ',latlongCollecter)
     })
     .catch(err => console.log(err))
    }
+
 
 handleChangeMain= (e) => {
   this.setState({userValue: e.target.value})
 }
 
-
-getBoundings= (res,resultLen) => {
-  let corde = []
-
-//Try this logic to swtich the lat long position for bounding 
-this.state.response.map(e => {
-  corde.push(e.metadata.location.coordinates)
-})
-  corde.map(elem => {
-    elem.move(0,1)
-  })
-
-  corde.length > 0 ?
-  this.setState({
-    dataLength: resultLen,
-    bounds: L.latLngBounds(corde)
-  }) : console.log('nein')
-}
-
 checkLength = (res) => {
   const resultLen = res.data.length;
   resultLen > 0 ?
-      this.getBoundings(res,resultLen)
+      this.changeLatLong(this.pushLatLong(res))
       : this.setState({dataLength: 0})
 }
 
