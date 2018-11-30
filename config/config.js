@@ -12,4 +12,3 @@ exports.get = function get(env){
 }
 
 'mongodb://localhost:27017/thesis'
-'mongodb://angsherpa232:nasaicimod2@ds119374.mlab.com:19374/retrievedataset'
