@@ -58,11 +58,11 @@ const storage = new GridFsStorage({
                         location: {
                             "coordinates":
                                 [
-                                    13.7493896484375,
-                                    51.08411588813325
+                                    13.7493896484375, 
+                51.0841158881332
                                 ]
                         },
-                        tags: 'air quality',
+                        tags: 'weather',
                         DateTime: '2017-11-03' //day-month-year
                     }
                 };
