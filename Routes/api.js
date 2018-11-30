@@ -323,8 +323,8 @@ router.post('/upload', upload.single('file'), (req, res) => {
 // })
 
 if(process.env.NODE_ENV === 'production') {
-    app.get('/*', (req,res)=>{
-        res.sendFile(path.resolve(__dirname, '../client','build','index.html'))
+    router.get('/*', (req,res)=>{
+        res.sendFile(path.resolve(__dirname, './client','build','index.html'))
     })
 }
 
