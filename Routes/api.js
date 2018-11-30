@@ -77,7 +77,8 @@ const upload = multer({ storage });
 //MONGO FILE UPLOAD/DOWNLOAD SECTION
 //GET MAIN ROUTE
 router.get('/', (req, res) => {
-    res.render('index');
+    //res.render('index');
+    res.send('welcome')
 })
 
 //@route GET /
@@ -322,10 +323,5 @@ router.post('/upload', upload.single('file'), (req, res) => {
 //     });
 // })
 
-if(process.env.NODE_ENV === 'production') {
-    router.get('/*', (req,res)=>{
-        res.sendFile(path.resolve(__dirname, './client','build','index.html'))
-    })
-}
 
 module.exports = router;

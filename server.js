@@ -9,16 +9,16 @@ const methodOverride = require('method-override');
 const app = express();
 
 //MONGO FILE UPLOAD/DOWNLOAD SECTION
-app.set('view engine', 'ejs');
+//app.set('view engine', 'ejs');
 
 //Middlewares
 const bodyParser = require('body-parser');
 
-mongoose.connect(config.DATABASE);
+mongoose.connect(config.DATABASE,{ useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
 //STATIC (public for react app and views for file upload/download)
-app.use(express.static('views'));
+//app.use(express.static('views'));
 
 
 
@@ -27,7 +27,12 @@ app.use(bodyParser.json());
 app.use('/api',router);
 app.use(methodOverride('_method'));
 
-
+if(process.env.NODE_ENV === 'production') {
+    app.get('/', (req,res)=>{
+        console.log('here')
+        //res.sendFile(path.resolve(__dirname, './client','build','index.html'))
+    })
+}
 
 //CONFIRM PORT AND INITIATE SERVER
 const PORT = process.env.PORT || 3002;
