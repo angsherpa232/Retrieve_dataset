@@ -28,9 +28,9 @@ app.use('/api',router);
 app.use(methodOverride('_method'));
 
 if(process.env.NODE_ENV === 'production') {
-    app.get('/api/home', (req,res)=>{
-        console.log('here')
-        //res.sendFile(path.resolve(__dirname, './client','build','index.html'))
+    const path = require('path');
+    app.get('/*', (req,res)=>{
+        res.sendFile(path.resolve(__dirname, './client','build','index.html'))
     })
 }
 
