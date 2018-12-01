@@ -29,16 +29,16 @@ const { geojsonPoly } = require('../Middleware/fetch_geojson');
 const theme = ['population', 'crime', 'migration','transport','economy','landuse','weather'];
 
 //FOR FILE UPLOAD/DOWNLOAD
-const conn = mongoose.createConnection(config.DATABASE,{ useNewUrlParser: true });
+//const conn = mongoose.createConnection(config.DATABASE,{ useNewUrlParser: true });
 
 //INIT gfs
 let gfs;
 
-conn.once('open', () => {
-    // Init stream
-    gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('uploads');
-});
+// conn.once('open', () => {
+//     // Init stream
+//     gfs = Grid(conn.db, mongoose.mongo);
+//     gfs.collection('uploads');
+// });
 
 
 //CREATE STORAGE ENGINE

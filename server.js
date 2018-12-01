@@ -14,7 +14,7 @@ const app = express();
 //Middlewares
 const bodyParser = require('body-parser');
 
-mongoose.connect(config.DATABASE,{ useNewUrlParser: true });
+//mongoose.connect(config.DATABASE,{ useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
 //STATIC (public for react app and views for file upload/download)
