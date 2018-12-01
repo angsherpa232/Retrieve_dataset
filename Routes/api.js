@@ -11,6 +11,7 @@ const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
 const config = require('../config/config').get(process.env.NODE_ENV);
+console.log('the config is ',config)
 
 
 //Model for GeoJSON

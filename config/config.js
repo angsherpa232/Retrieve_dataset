@@ -1,9 +1,9 @@
 const config = {
     production: {
-        DATABASE: process.env.MONGODB_URI
+        DATABASE: process.env.MONGOLAB_URI
     },
     default: {
-        DATABASE: 'mongodb://localhost:27017/thesis'
+        DATABASE: process.env.MONGOLAB_URI
     }
 }
 
@@ -12,3 +12,4 @@ exports.get = function get(env){
 }
 
 
+'mongodb://localhost:27017/thesis'
