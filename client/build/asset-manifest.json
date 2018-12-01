@@ -1,11 +1,11 @@
 {
-  "main.js": "/static/js/main.d4c8765b.chunk.js",
-  "main.js.map": "/static/js/main.d4c8765b.chunk.js.map",
-  "static/js/1.bbd660da.chunk.js": "/static/js/1.bbd660da.chunk.js",
-  "static/js/1.bbd660da.chunk.js.map": "/static/js/1.bbd660da.chunk.js.map",
-  "runtime~main.js": "/static/js/runtime~main.229c360f.js",
-  "runtime~main.js.map": "/static/js/runtime~main.229c360f.js.map",
-  "index.html": "/index.html",
-  "precache-manifest.0e66da7a462f791aa25dfbef515c82c2.js": "/precache-manifest.0e66da7a462f791aa25dfbef515c82c2.js",
-  "service-worker.js": "/service-worker.js"
+  "main.js": "/Retrieve_dataset/static/js/main.d4c8765b.chunk.js",
+  "main.js.map": "/Retrieve_dataset/static/js/main.d4c8765b.chunk.js.map",
+  "static/js/1.bbd660da.chunk.js": "/Retrieve_dataset/static/js/1.bbd660da.chunk.js",
+  "static/js/1.bbd660da.chunk.js.map": "/Retrieve_dataset/static/js/1.bbd660da.chunk.js.map",
+  "runtime~main.js": "/Retrieve_dataset/static/js/runtime~main.4b13ea4b.js",
+  "runtime~main.js.map": "/Retrieve_dataset/static/js/runtime~main.4b13ea4b.js.map",
+  "index.html": "/Retrieve_dataset/index.html",
+  "precache-manifest.20650d435b0c93257d3f1fefdcf29dfc.js": "/Retrieve_dataset/precache-manifest.20650d435b0c93257d3f1fefdcf29dfc.js",
+  "service-worker.js": "/Retrieve_dataset/service-worker.js"
 }

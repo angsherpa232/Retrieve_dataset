@@ -9,11 +9,17 @@
     "react-leaflet": "^2.1.2",
     "react-scripts": "2.1.1"
   },
+  "devDependencies": {
+    "gh-pages": "^2.0.1",
+    "react-scripts": "1.0.13"
+  },
+  "homepage": "http://angsherpa232.github.io/Retrieve_dataset",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
   },
   "proxy": "http://localhost:3002/api",
   "browserslist": [

@@ -79,8 +79,9 @@ const upload = multer({ storage });
 //GET MAIN ROUTE
 router.get('/', (req, res) => {
     //res.render('index');
+    res.sendFile(path.resolve(__dirname, '../client','build','index.html'))
     console.log('config', config)
-    res.send('welcome')
+    //res.send('welcome')
 })
 
 //@route GET /
@@ -327,7 +328,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
 // })
 
 
-if(process.env.NODE_ENV === 'production') {
+if(process.env.NODE_ENV != 'production') {
     console.log('from api.js')
     router.get('/*', (req,res)=>{
         res.sendFile(path.resolve(__dirname, './client','build','index.html'))
