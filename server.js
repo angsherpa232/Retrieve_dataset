@@ -21,7 +21,6 @@ mongoose.Promise = global.Promise;
 //app.use(express.static('views'));
 
 
-
 //Call Middlewares
 app.use(bodyParser.json());
 app.use('/api',router);
