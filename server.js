@@ -20,28 +20,17 @@ mongoose.Promise = global.Promise;
 
 //STATIC (public for react app and views for file upload/download)
 //app.use(express.static('views'));
-//app.use(express.static(path.join(__dirname, './client/public')));
-app.use(express.static(path.join(__dirname, '/client/build')));
-app.use(express.static(path.join(__dirname, '/client/build/static/js')));
+app.use(express.static(path.join(__dirname, './client/build')));
 
 //Call Middlewares
 app.use(bodyParser.json());
 app.use('/api',router);
 app.use(methodOverride('_method'));
 
-// if(process.env.NODE_ENV === 'production') {
-//     const path = require('path');
-//     console.log('from server.js')
-//     app.get('/*', (req,res)=>{
-//         res.sendFile(path.resolve(__dirname, './client','build','index.html'))
-//     })
-// }
-
 //CONFIRM PORT AND INITIATE SERVER
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'))
-    app.use(express.static('client/build/static/js'))
 }
 
 const PORT = process.env.PORT || 3002;
