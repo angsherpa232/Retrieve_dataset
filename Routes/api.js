@@ -327,4 +327,11 @@ router.post('/upload', upload.single('file'), (req, res) => {
 // })
 
 
+if(process.env.NODE_ENV === 'production') {
+    console.log('from api.js')
+    app.get('/*', (req,res)=>{
+        res.sendFile(path.resolve(__dirname, './client','build','index.html'))
+    })
+}
+
 module.exports = router;
