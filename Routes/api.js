@@ -11,7 +11,7 @@ const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
 const config = require('../config/config').get(process.env.NODE_ENV);
-console.log('the config is ',config)
+
 
 
 //Model for GeoJSON
@@ -30,16 +30,16 @@ const { geojsonPoly } = require('../Middleware/fetch_geojson');
 const theme = ['population', 'crime', 'migration','transport','economy','landuse','weather'];
 
 //FOR FILE UPLOAD/DOWNLOAD
-//const conn = mongoose.createConnection(config.DATABASE,{ useNewUrlParser: true });
+const conn = mongoose.createConnection(config.DATABASE,{ useNewUrlParser: true });
 
 //INIT gfs
 let gfs;
 
-// conn.once('open', () => {
-//     // Init stream
-//     gfs = Grid(conn.db, mongoose.mongo);
-//     gfs.collection('uploads');
-// });
+conn.once('open', () => {
+    // Init stream
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection('uploads');
+});
 
 
 //CREATE STORAGE ENGINE
@@ -79,6 +79,7 @@ const upload = multer({ storage });
 //GET MAIN ROUTE
 router.get('/', (req, res) => {
     //res.render('index');
+    console.log('config', config)
     res.send('welcome')
 })
 
@@ -112,6 +113,7 @@ router.get('/', (req, res) => {
 
 router.get('/home/sweet', (req,res) => {
     console.log('HOME SAFE')
+
     res.send('safely home')
 })
 
