@@ -10,7 +10,7 @@ const path = require('path');
 const app = express();
 
 //MONGO FILE UPLOAD/DOWNLOAD SECTION
-//app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 
 //Middlewares
 const bodyParser = require('body-parser');
@@ -20,7 +20,7 @@ mongoose.Promise = global.Promise;
 
 //STATIC (public for react app and views for file upload/download)
 //app.use(express.static('views'));
-app.use(express.static(path.join(__dirname, './client/build')));
+//app.use(express.static(path.join(__dirname, './client/build')));
 
 //Call Middlewares
 app.use(bodyParser.json());
