@@ -46,9 +46,9 @@ class App extends Component {
 
    componentDidMount() {
      let latlongCollecter = []
-    axios.get('/api/all')
+    axios.get('/all')
     .then(result => {
-      'just testing'
+  
       this.changeLatLong(this.pushLatLong(result))
       latlongCollecter.push(result.data[0].metadata.location.coordinates)
       latlongCollecter.map(e=>e.move(1,0))
