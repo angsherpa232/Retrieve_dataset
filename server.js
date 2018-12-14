@@ -21,7 +21,7 @@ mongoose.Promise = global.Promise;
 
 //STATIC (public for react app and views for file upload/download)
 //app.use(express.static('views'));
-app.use(express.static(path.join(__dirname, './client/build')));
+//app.use(express.static(path.join(__dirname, './client/build')));
 
 //Call Middlewares
 app.use(bodyParser.json());
