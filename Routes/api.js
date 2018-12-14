@@ -79,10 +79,7 @@ const upload = multer({ storage });
 //GET MAIN ROUTE
 router.get('/', (req, res) => {
     //res.render('index');
-    console.log('first testing')
-    //res.sendFile(path.resolve(__dirname, '../client/build/index.html'))
-    console.log('config', config)
-    //res.send('welcome')
+    res.sendFile(path.resolve(__dirname, '../client/build/index.html'))
 })
 
 //@route GET /
