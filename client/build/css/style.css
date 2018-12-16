@@ -30,7 +30,7 @@ html body {
     background-color: #1abc9c;
     padding: 15px;
     text-align: center;
-    font-size: 35px;
+    font-size: 30px;
     color: white;
 }
 
@@ -104,9 +104,8 @@ input[type="text"]:focus {
         -webkit-flex-direction: column;
         flex-direction: column;
     }
-    .user_input {
-        height: 35vh;
-        overflow: auto;
+    .footer {
+        font-size-adjust: 0.58;
     }
 }
   
