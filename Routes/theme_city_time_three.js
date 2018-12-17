@@ -53,8 +53,8 @@ async function file_within_city_with_time(cityName, theme_value, time, req, next
     } else {
         try{
             req.city = (fetchedCity.data)[1].geojson.coordinates;
-            req.theme_value = theme_value;
-            parseTime(time, req, next,req.city,theme_value);
+            req.theme_value = theme_value.toLowerCase();
+            parseTime(time, req, next,req.city,theme_value.toLowerCase());
         } catch (e) {
             req.error = e;
             next()
@@ -70,23 +70,23 @@ let three_param_route = function (req, res, next) {
         ({time,theme_value,cityName} = if_theme_first(req.params))
         console.log('from theme first')
         
-        file_within_city_with_time(cityName,theme_value,time, req,next)
+        file_within_city_with_time(cityName,theme_value.toLowerCase(),time, req,next)
         //gfsModel.themeCity(city, theme_value, (err, file)
 
         //cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
-    } else if (themed.includes(req.params[0])) {
+    } else if (themed.includes((req.params[0]).toLowerCase())) {
         ({time, theme_value, cityName} = if_theme_second(req.params))
         //cityName ? file_within_city(cityName,theme_value,req,next) : parseTime(time.time,req,next)
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
         console.log('from theme sec')
-        file_within_city_with_time(cityName,theme_value,time, req,next)
+        file_within_city_with_time(cityName,theme_value.toLowerCase(),time, req,next)
     } else {
         //run the code that checks between time and space
         ({time, theme_value, cityName} = if_theme_third(req.params))
         //** NEED TO DEVELOP COMPLETELY NEW FUNCTION :D **/
         console.log('from theme third')
-        file_within_city_with_time(cityName,theme_value,time, req,next)
+        file_within_city_with_time(cityName,theme_value.toLowerCase(),time, req,next)
     }
 }
 

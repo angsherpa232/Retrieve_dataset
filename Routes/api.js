@@ -130,8 +130,8 @@ router.get('/all', (req,res) => {
 //@desc Loads particular theme data 
 //@ First checks if theme is in list and then check for req.query for nearby operation
 router.get('/:theme', function (req, res, next) {
-    if (theme.includes(req.params.theme)) {
-         gfsModel.onlytheme(req.params.theme, (err, file) => {
+    if (theme.includes(req.params.theme.toLowerCase())) {
+         gfsModel.onlytheme(req.params.theme.toLowerCase(), (err, file) => {
             if (!file || file.length === 0) {
                 res.status(400).json({
                     err: 'From theme only'
