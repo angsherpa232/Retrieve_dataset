@@ -5,7 +5,7 @@ const UserInputStats = (props) => {
         <div>
         {`Status: `}
         <br/>
-        {`${props.status}`}
+        {props.status === "OK" ? "OK" : "Error: Check for spelling mistakes or extra whitespace in the parameters."}
         <br/> <br/>
         {`Total datasets found: ${props.dataLength}`}
         <br/>
