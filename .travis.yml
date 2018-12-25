@@ -1,0 +1,7 @@
+language: node_js
+node_js: "11"
+install: npm install -g eslint
+script:
+  # - python --version
+  # - npm test
+  - eslint .
