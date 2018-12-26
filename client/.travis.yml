@@ -1,0 +1,12 @@
+# https://facebook.github.io/create-react-app/docs/running-tests#continuous-integration
+
+language: node_js
+node_js:
+  - 8
+  - 11
+cache:
+  directories:
+    - node_modules
+script:
+  - npm run build
+  - npm test
